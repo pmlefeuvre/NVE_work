@@ -1,0 +1,265 @@
+
+
+#---------------------------------------------------------------#
+#         LOAD ALL RAW LOAD CELL DATA (i.e. FREQUENCY)          #
+#     CONVERT FREQUENCY INTO PRESSURE BASED ON CALIBRATION      #
+#         SAVE PRESSURE DATA IN FILES OF 2-MONTH PERIOD         #
+#                                                               #
+#                                                               #
+# Author: Pim Lefeuvre                         Date: 2015-04-08 #
+#                                       Last Update: 2016-04-25 #
+#                                                               #
+# Updates:                                                      #
+# - 2016-04-12: Reformat to give code to NVE                    #
+#       Add title and remove useless code. Simplify Time(Hour)  #
+#       conversion by removing floor and round code to use      #
+#       instead sprintf that adds a 0 to have 4 numbers aligned #
+#       - The result is much much faster.                       #
+#                                                               #
+# - 2016-04-25: Add colClasses to loading function              #
+#                                                               #
+# Formerly called "LoadAllData_subsample_save2.R", inherited    #
+# from "LoadAllData.R" and "LoadAllData_save.R" (no subsampling)#
+#---------------------------------------------------------------#
+
+
+# Go to the following Path in order to access data files
+setwd("/Users/PiM/Desktop/NVE_work/Processing")
+Sys.setenv(TZ="UTC")    
+
+###########################################
+# Clean up Workspace
+rm(list = ls(all = TRUE))
+###########################################
+
+# Load libraries (!!! NEED TO BE PRE-INSTALLED !!!)
+library(zoo)
+library(chron)      # cmd: trunc
+library(hydroTSM)   # cmd: izoo2rzoo
+
+# Load User Functions
+source("../UserFunction/juliandate.R")
+source("../UserFunction/subsample.R")
+source("../UserFunction/remove_col.R")
+
+# Start Timer to compute Elapsed time
+ptm <- proc.time()
+
+print("Loading Load Cell Data")
+
+# Load the Data and combine them
+Years       <- seq(1992,2013)
+datafile    <- sprintf("Data/Raw/LC_%i.csv",Years)
+colClasses  <- c(rep("character",3),rep("numeric",9)) 
+LC_all      <- do.call("rbind",
+                       lapply(datafile,
+                              function(f) read.csv(f,colClasses=colClasses)))
+
+###########################################################
+# Attach names to columns 
+attach(LC_all)
+
+# Set up a string with Date and Time
+print("Preparing Timestamp")
+Dates 		<- strptime(paste(Year,Day,Hour),"%Y %j %H%M");
+# Show existing duplicates of date
+Dates[duplicated(Dates)]
+
+# Recreate dataframe with the formatted date (Replace Year, Dates & Hours)
+lcol        <- ncol(LC_all)
+LC_all      <- cbind(Dates,LC_all[,4:lcol])
+detach(LC_all)
+
+# Figure out the starting date and the ending date of the whole dataset
+daterange 	<- c(as.POSIXlt(min(LC_all$Dates, na.rm = TRUE)), as.POSIXlt(max(LC_all$Dates, na.rm = TRUE)))
+
+cat(sprintf("\n Data Span: from %s \n \t \ \ \ to \t %s \n\n",daterange[1], daterange[2]))
+
+
+###########################################################
+rm(Years, datafile, Dates)
+###########################################################
+###########################################################
+
+# Convert Character/Factors to numeric (kHz)
+# The values are then converted in Hz
+LC_all$LC6      <- as.numeric(LC_all$LC6[])*1000;
+LC_all$LC1e     <- as.numeric(LC_all$LC1e[])*1000;
+LC_all$LC4	    <- as.numeric(LC_all$LC4[])*1000;
+LC_all$LC2a     <- as.numeric(LC_all$LC2a[])*1000;
+LC_all$LC97_2   <- as.numeric(LC_all$LC97_2[])*1000;
+LC_all$LC97_1	<- as.numeric(LC_all$LC97_1[])*1000;
+LC_all$LC7	    <- as.numeric(LC_all$LC7[])*1000;
+LC_all$LC2b     <- as.numeric(LC_all$LC2b[])*1000;
+LC_all$LC01     <- as.numeric(LC_all$LC01[])*1000;
+
+# Conversion of -99999 and 0 to Not A Number
+print("Replacing Data Gaps with NA values")
+is.na(LC_all)   <- (LC_all <= -9999)
+
+print("Computing Subglacial Pressure in bar")
+# Conversion from frequencies (kHz) to Pressure (bars)
+LC_all$LC6      <- -0.0000092248*(1061.5^2 - LC_all$LC6^2)  + (-0.32476);
+LC_all$LC1e     <-  0.0334466*(LC_all$LC1e   - 1157.3)+ 0.0000178058* (LC_all$LC1e   - 1157.3)^2 ;
+LC_all$LC4      <- -0.0000090465*(1105.0^2 - LC_all$LC4^2)  + (-0.31762);
+LC_all$LC2a	    <- -0.0000090971*(1106.0^2 - LC_all$LC2b^2) + (-0.32367);
+LC_all$LC2b     <-  0.0304178*(LC_all$LC2b   - 1178.0)  + 0.0000156223* (LC_all$LC2b - 1178.0)^2;
+LC_all$LC01     <-  0.0359029*(LC_all$LC01   - 1239.0)  + 0.0000170723* (LC_all$LC01 - 1239.0)^2;
+
+### Load Cell Replacement ###
+lt              <- length(LC_all$Dates)
+t97.t12         <- which(LC_all$Dates==as.POSIXct("2012-84 17:59",format="%Y-%j %H:%M"))
+## Downstream Load Cell: LC97_2 replaced by LC12_1
+LC_all$LC97_2[1:t97.t12] <- 0.0352708*(LC_all$LC97_2[1:t97.t12]  - 1191.8) + 0.0000168821*(LC_all$LC97_2[1:t97.t12] - 1191.8)^2;
+LC_all$LC97_2[t97.t12:lt]<- 0.0365852*(LC_all$LC97_2[t97.t12:lt] - 1150.6) + 0.0000153525*(LC_all$LC97_2[t97.t12:lt]  - 1150.6)^2;
+## Upstream Load Cell:   LC97_1 replaced by LC12_2
+LC_all$LC97_1[1:t97.t12] <- 0.0373280*(LC_all$LC97_1[1:t97.t12]  - 1230.0) + 0.0000181262*(LC_all$LC97_1[1:t97.t12] - 1230.0)^2;
+LC_all$LC97_1[t97.t12:lt]<- 0.0361260*(LC_all$LC97_1[t97.t12:lt] - 1176.0) + 0.0000164113*(LC_all$LC97_1[t97.t12:lt]  - 1176.0)^2;
+
+## Replacement Load Cell 7 by LoadCell 7 (Observed in the data and Gaute's files -- Reasons unknown)
+## Date chosen because LC7 was not recorded then and it is between the two identified periods.
+t7a.t7b         <- which(LC_all$Dates==as.POSIXct("2000-001 00:00",format="%Y-%j %H:%M"))
+LC_all$LC7[1:t7a.t7b]   <-  0.0344475*(LC_all$LC7[1:t7a.t7b]    - 1115.0)  + 0.0000170808* (LC_all$LC7[1:t7a.t7b]  - 1115.0)^2;
+LC_all$LC7[t7a.t7b:lt]  <-  0.0358384*(LC_all$LC7[t7a.t7b:lt]   - 1196.3)  + 0.0000162982* (LC_all$LC7[t7a.t7b:lt]  - 1196.3)^2;
+
+
+# Removing non Realistic pressures converting them in Not A Number
+maxP 		<- 100;
+cat(sprintf("Removing non-realistic Pressure values (> %1.0f bars) \n",maxP))
+
+LC_all$LC6      [ LC_all$LC6  > maxP]	<- NA;
+LC_all$LC1e	    [ LC_all$LC1e > maxP] 	<- NA;
+LC_all$LC4	    [ LC_all$LC4  > maxP]	<- NA;
+LC_all$LC2a     [ LC_all$LC2a > maxP]	<- NA;
+LC_all$LC97_2   [ LC_all$LC97_2>maxP]	<- NA;
+LC_all$LC97_1	[ LC_all$LC97_1>maxP]	<- NA;
+LC_all$LC7      [ LC_all$LC7  > maxP] 	<- NA;
+LC_all$LC2b  	[ LC_all$LC2b > maxP] 	<- NA;
+LC_all$LC01     [ LC_all$LC01 > maxP] 	<- NA;
+
+# Convert from bars to MPa
+lcol       <- ncol(LC_all)
+LC_all[,2:lcol]<-LC_all[,2:lcol]/10
+
+# Clean variables
+rm(maxP,daterange,lt,t7a.t7b,t97.t12)
+
+# Elapsed time
+cat("Elapsed time is",round((proc.time() - ptm)[3]), "sec.","\n")
+
+
+##############################################################
+########    TRANSFORM TIME SERIES INTO ZOO OBJECT     ########
+##############################################################
+
+# Convert into zoo object.
+lcol         <- ncol(LC_all)
+zoo_LC       <- zoo(x=LC_all[2:lcol], order.by=LC_all$Dates)
+print("Converting Time Series into Zoo object")
+
+# Aggregate values with same timestamp
+zoo_LC_agg   <- aggregate(zoo_LC,index(zoo_LC),function(x) mean(x,na.rm=TRUE))
+
+
+# Print how many values were combined
+cat(">>>",ncol(zoo_LC)*(nrow(zoo_LC)-nrow(zoo_LC_agg)),"values were combined with aggregate","\n")
+
+# Elapsed time
+print("First Part Completed")
+cat("Elapsed time is",round((proc.time() - ptm)[3]), "sec.","\n \n")
+
+# Remove Original data
+rm(LC_all, zoo_LC)
+
+
+########################################################################
+#######################   SUB-SAMPLING   ###############################
+# Make folder where will be saved the data
+dir.create("Data/Zoo",           showWarnings = FALSE)
+dir.create("Data/Zoo/Sub1min",   showWarnings = FALSE)
+dir.create("Data/Zoo/Sub15med",  showWarnings = FALSE)
+dir.create("Data/Zoo/Sub15mean", showWarnings = FALSE)
+dir.create("Data/Zoo/Sub_daily", showWarnings = FALSE)
+
+# Sub-sampling (2 MONTHS)
+start<-seq(as.Date("1992-11-01"),as.Date("2013-12-01"),by="2 months")
+end  <-seq(as.Date("1993-01-01"),as.Date("2014-01-01"),by="2 months")
+
+for (i in 1:length(start)) {
+    
+    # Intitialise Time Period
+    sub.start   <- juliandate(start[i])
+    sub.end     <- juliandate(end[i])
+    
+    cat("\n","Subsampling of the LC time series from",sub.start,"to",sub.end,"\n")
+    
+    sub_zoo_LC      <- subsample(zoo_LC_agg,sub.start,sub.end)
+    ########################################################################
+    ########################################################################
+    
+    
+    ########################################################################
+    ####################  REGURLARLY SPACED ZOO  ###########################
+    print("Conversion into a regularly spaced object")
+    
+    # Start Timer to compute Elapsed time
+    ptm                 <- proc.time()
+    
+    # Filenames
+    filename_1min  <-paste("Data/Zoo/Sub1min/Zoo_LCall_min_",
+                           sub.start,"_",sub.end,".csv",sep='')
+    filename_15med <-paste("Data/Zoo/Sub15med/Zoo_LCall_15min_med_",
+                           sub.start,"_",sub.end,".csv",sep='')
+    filename_15mean<-paste("Data/Zoo/Sub15mean/Zoo_LCall_15min_mean_",
+                           sub.start,"_",sub.end,".csv",sep='')
+    filename_daily <-paste("Data/Zoo/Sub_daily/Zoo_LCall_day_med_",
+                           sub.start,"_",sub.end,".csv",sep='')
+    
+    ### Select one column and converts it into a regularly spaced zoo object (inserting NAs when there is no data)
+    # 1 min interval
+    #---------------
+    print("Proceed to one minute interval")
+    LC_reg_min          <- izoo2rzoo(sub_zoo_LC,from=as.POSIXct(start[i]),
+                                     to=as.POSIXct(end[i])-1,
+                                     date.fmt="%Y-%m-%d %H:%M:%S", tstep="min")
+    
+    # Save data in zoo format
+    write.zoo(LC_reg_min,file=filename_1min,sep=",")
+    rm(sub_zoo_LC)
+    
+    # 15 min interval
+    #----------------
+    #To create a continuous time series at 15min interval, I have to truncate the original index of the zoo to every 15 min. For that I convert the zoo dates in chron to be able to use the trunc function, which can deal with sub-hourly interval. Then, I reconvert in POSIXct and apply aggregate.
+    
+#     #-- MEDIAN
+#     print("Proceed to 15 minutes interval (Median)")
+#     LC_reg_15min_med    <- aggregate(LC_reg_min,as.POSIXct(trunc(as.chron(index(LC_reg_min)),units="00:15:00")),function(x) median(x,na.rm=TRUE))
+#     
+#     # Save data in zoo format
+#     write.zoo(LC_reg_15min_med,file=filename_15med,sep=",")
+#     rm(LC_reg_15min_med)
+    
+    #-- MEAN
+    print("Proceed to 15 minutes interval (Mean)")
+    LC_reg_15min_mean   <- aggregate(LC_reg_min,as.POSIXct(trunc(as.chron(index(LC_reg_min)),units="00:15:00")),function(x) mean(x,na.rm=TRUE))
+    
+    # Save data in zoo format
+    write.zoo(LC_reg_15min_mean,file=filename_15mean,sep=",")
+    rm(LC_reg_15min_mean)
+    
+    
+    # 1 day interval
+    #---------------
+    print("Proceed to one day interval")
+    LC_reg_day          <- aggregate(LC_reg_min,as.POSIXct(trunc(index(LC_reg_min),units="days")),function(x) median(x,na.rm=TRUE))
+    
+    # Save data in zoo format
+    write.zoo(LC_reg_day,file=filename_daily,sep=",")
+    rm(LC_reg_day)
+    
+    # Elapsed time
+    cat("Elapsed time is",round((proc.time() - ptm)[3]), "sec.","\n")
+}
+
+
+
