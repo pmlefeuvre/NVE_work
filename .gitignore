@@ -1,0 +1,54 @@
+# Logs and databases #
+######################
+*.csv
+*.dat
+*.DAT
+
+# R generated files #
+#####################
+*.Rhistory
+*.Rdata
+
+# buffers#
+##########
+*.sh#
+*.sh~
+*.txt~
+
+# Data & Admin Folders #
+########################
+/Administration
+/MetData/DischargeSSL_corrections/Data
+/MetData/DischargeSSL_corrections/Plots
+/MetData/Engabreen_Temperature_Precipitation/Raw
+/MetData/Engabreen_Temperature_Precipitation/Plots
+/Processing/Archive
+/Processing/Data/Hydra2
+/Processing/Data/MetData
+/Processing/Data/Raw
+/Processing/Data/Zoo
+/Processing/Plots
+/Processing/tocheck
+/Raw/1992
+/Raw/1993
+/Raw/1994
+/Raw/1995
+/Raw/1996
+/Raw/1997
+/Raw/1998
+/Raw/1999
+/Raw/2000
+/Raw/2001
+/Raw/2002
+/Raw/2003
+/Raw/2004
+/Raw/2005
+/Raw/2006
+/Raw/2007
+/Raw/2008
+/Raw/2009
+/Raw/2010
+/Raw/2011
+/Raw/2012
+/Raw/2013
+/Raw/2014
