@@ -1,0 +1,10 @@
+# Logs and databases #
+######################
+*.csv
+*.dat
+*.DAT
+
+# R generated files #
+######################
+*.Rhistory
+*.Rdata
