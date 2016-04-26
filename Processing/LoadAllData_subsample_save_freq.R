@@ -16,7 +16,8 @@
 
 
 # Go to the following Path in order to access data files
-setwd("/Users/PiM/Desktop/NVE_work/Processing")
+# setwd("/Users/PiM/Desktop/NVE_work/Processing")
+setwd("//nve/fil/h/HB/Personlige mapper/PiM/Processing/")
 Sys.setenv(TZ="UTC")    
 
 ###########################################
