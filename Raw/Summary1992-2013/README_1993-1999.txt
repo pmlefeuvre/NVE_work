@@ -1,0 +1,49 @@
+This text file gathers all the manual edits made to the Raw files 
+collected before 1999. A summary of all data exists in RAWDATA_SUM.xls.
+The names of the files (I got compared to the summary) differ by not 
+having capital letters and are written "data" insead of "DATA".
+
+1992:
+	- data001.dat: Removed unknown data and kept LC data within the first 14 lines (Before 344 10:00). To get continuity in the data, I added two lasts empty columns between 344 05:00 and 344 13:00 as well as one last empty column between 344 14:00 and 346 12:00. Then I added one column to the rest of the data with$ cat data001.dat | sed 's/^M/,^M/' > /tmp/data001.dat; mv /tmp/data001.dat data001.dat
+I had to remove ^M:
+$ for i in Ordered/*.dat; do cat $i | sed 's/^M//' > /tmp/${i##*/}; mv /tmp/${i##*/} $i; done
+	- Data from 1993 were deleted from data001.dat
+
+1993:
+	- Data from 1992 were deleted from data001.dat
+	- data0[09-18].dat: Removed unknown data and kept LC data in the whole file. Quite a volume of none LC data. I also deleted file data014.dat because there was no LC data.
+	- data0[29-31].dat, data0[33-39].dat, data041.dat and data043.dat were deleted (Niel's data)
+	- data040.dat I added two empty columns (i.e. ",,") to keep coherence in the file despite the rewiring (see RAWDATA_SUM.xls)
+	- Extracted LC data (from Niel Iversons') from files (data0[48,49,51,53,54,55,57,58,60-62].dat) with this code: 
+$ for i in 48 49 51 53 54 55 57 58 60 61 62;
+$ do awk -F, -v OFS=, '{if ($1==211) print $0}' ../Raw_Backup/data0$i.dat  > data0$i.dat
+$ done
+	- data0[50,52,56,59,63-69,72-75].dat were deleted because no LC data
+
+1994:
+	- data0[76-79,82,84].dat were deleted because no LC data
+	- Extracted LC data from files (data0[80,81].dat) with this code: 
+$ for i in 81 82;do awk -F, -v OFS=, '{if ($1==211) print $0}' ../Raw_Backup/data0$i.dat  > data0$i.dat; done
+	- Data from 1995 were deleted from data096.dat and the file data097.dat was removed (only 1995).
+	
+1995:
+	- Data from 1994 were deleted from data096.dat
+	- In data098.dat, the message "[Datalogger] replaced all -99999 with 0 it seems!!" was deleted. 0s were replaced by -99999 and "^M" (press CTRL-V CTRL-M) were deleted using:
+$ cat ../Raw_BackUp/data098.dat | awk -F, -v OFS=, '{if($4==0) $4=-99999; if($5==0) $5=-99999; if($6==0) $6=-99999; if($7==0) $7=-99999;if ($8==0) $8=-99999; if($9~0) $9=-99999;}{ print $0}' | sed -e "s/^M//" > data098.dat
+> OLD was also removing time when equal to 0 (midnight)
+$ cat ../Raw_BackUp/data098.dat | sed 's/,0,/,-99999,/g' | sed 's/,0,/,-99999,/g' | awk -F, -v OFS=, '{if ($9~0) $9=-99999; else if ($9==0) $9=-99999}{ print $0}' > data098.dat
+
+1996:
+	- Data from 1997 were deleted from data096.dat and 0s were replaced by -99999 using:
+$ cat ../Raw_BackUp/DAT97_01.DAT | awk -F, -v OFS=, '{if($4==0) $4=-99999; if($5==0) $5=-99999; if($6==0) $6=-99999; if($7==0) $7=-99999;if ($8==0) $8=-99999; if($9~0) $9=-99999;}{ print $0}' > DAT97_01.DAT 
+
+1997:
+	- In DAT97_01.DAT, Data from 1996 were deleted. 0s were replaced by -99999 and "^M" (press CTRL-V CTRL-M) were deleted with:
+$ cat ../Raw_BackUp/DAT97_01.DAT | awk -F, -v OFS=, '{if($4==0) $4=-99999; if($5==0) $5=-99999; if($6==0) $6=-99999; if($7==0) $7=-99999;if ($8==0) $8=-99999; if($9~0) $9=-99999;}{ print $0}' |  sed -e "s/^M//" > DAT97_01.DAT  
+	- In the files DAT97_[02-11].DAT, 0s were replaced by -99999 and "^M" (press manually CTRL-V CTRL-M) were deleted with:
+$ for i in 02 03 04 05 06 07 08 09 10 11; do cat ../Raw_BackUp/DAT97_$i.DAT | awk -F, -v OFS=, '{if($4==0) $4=-99999; if($5==0) $5=-99999; if($6==0) $6=-99999; if($7==0) $7=-99999;if ($8==0) $8=-99999; if($9~0) $9=-99999;}{ print $0}' |  sed -e "s/^M//" > DAT97_$i.DAT; done
+	- In DAT98001.dat, Data from 1998 were deleted.
+
+1998:
+	- In DAT98001.dat, Data from 1997 were deleted.
+	- In Data99_01.dat, Data from 1999 were deleted.
