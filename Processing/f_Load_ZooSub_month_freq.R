@@ -22,8 +22,13 @@ Load_ZooSub_month_freq <- function(sub.start="05/15/2010 09:00",
                                    sub.end="05/15/2010 11:00",
                                    type="15min_mean")
 {
-    # Define TZ to avoid time difference correction
-    Sys.setenv(TZ="UTC")
+    # Detect Operating System
+    if(.Platform$OS.type == "unix"){   HOME="/Users/PiM/Desktop"}
+    if(.Platform$OS.type == "windows"){HOME="//nve/fil/h/HB/Personlige mapper/PiM"}
+    
+    # Go to the following Path in order to access data files
+    setwd(sprintf("%s/NVE_work/Processing/",HOME))
+    Sys.setenv(TZ="UTC")    
     
     # Load libraries
     require(zoo)
