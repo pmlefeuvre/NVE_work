@@ -48,9 +48,13 @@ Plot_LCs_Pressure <- function(sub.start="2003-07-01",sub.end="2003-07-15",
                               f.plot=FALSE){
     
     ############################################################################
+    # Detect Operating System
+    if(.Platform$OS.type == "unix"){   HOME="/Users/PiM/Desktop"}
+    if(.Platform$OS.type == "windows"){HOME="//nve/fil/h/HB/Personlige mapper/PiM"}
+    
     # Go to the following Path in order to access data files
-    setwd("/Users/PiM/Desktop/NVE_work/Processing")
-    Sys.setenv(TZ="UTC")    
+    setwd(sprintf("%s/NVE_work/Processing/",HOME))
+    Sys.setenv(TZ="UTC")        
     
     # Load libraries (!!! NEED TO BE PRE-INSTALLED !!!)
     library(zoo)

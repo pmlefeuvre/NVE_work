@@ -46,9 +46,13 @@ Plot_LCs_MetHydro <- function(sub.start="2003-07-13",sub.end="2003-07-31",
     def.par <- par(no.readonly = TRUE)
     # ##########################################
     
+    # Detect Operating System
+    if(.Platform$OS.type == "unix"){   HOME="/Users/PiM/Desktop"}
+    if(.Platform$OS.type == "windows"){HOME="//nve/fil/h/HB/Personlige mapper/PiM"}
+    
     # Go to the following Path in order to access data files
-    setwd("/Users/PiM/Desktop/NVE_work/Processing")
-    Sys.setenv(TZ="UTC")    
+    setwd(sprintf("%s/NVE_work/Processing/",HOME))
+    Sys.setenv(TZ="UTC")      
     
     # Load libraries (!!! NEED TO BE PRE-INSTALLED !!!)
     library(zoo)
@@ -255,7 +259,6 @@ Plot_LCs_MetHydro <- function(sub.start="2003-07-13",sub.end="2003-07-31",
     LC.ymax     <- max(LC,na.rm=T)
     
     # Layout Parameters
-    par(def.par)
     par(mfrow=c(3,1))
     left        <- 5 
     right       <- 4 
@@ -322,7 +325,7 @@ Plot_LCs_MetHydro <- function(sub.start="2003-07-13",sub.end="2003-07-31",
     # Legend
     legend("topright",names(LC[,seq(LC.ln,1),drop=F]),lwd=2,col=col2,lty=lty,cex=0.7,bg="white")
     
-    
+    par(def.par)
     ########################################
     # End PDF file
     if (f.plot){dev.off()}

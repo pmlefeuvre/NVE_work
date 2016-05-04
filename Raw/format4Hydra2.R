@@ -25,9 +25,13 @@
 rm(list = ls(all = TRUE))
 ##########################################
 
+# Detect Operating System
+if(.Platform$OS.type == "unix"){   HOME="/Users/PiM/Desktop"}
+if(.Platform$OS.type == "windows"){HOME="//nve/fil/h/HB/Personlige mapper/PiM"}
+
 # Go to the following Path in order to access data files
-setwd("/Users/PiM/Desktop/NVE_work/Raw/")
-Sys.setenv(TZ="UTC")    
+setwd(sprintf("%s/NVE_work/Raw/",HOME))
+Sys.setenv(TZ="UTC")          
 
 # Load libraries
 

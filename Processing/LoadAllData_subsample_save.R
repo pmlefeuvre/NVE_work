@@ -22,9 +22,12 @@
 # from "LoadAllData.R" and "LoadAllData_save.R" (no subsampling)#
 #---------------------------------------------------------------#
 
+# Detect Operating System
+if(.Platform$OS.type == "unix"){   HOME="/Users/PiM/Desktop"}
+if(.Platform$OS.type == "windows"){HOME="//nve/fil/h/HB/Personlige mapper/PiM"}
 
 # Go to the following Path in order to access data files
-setwd("/Users/PiM/Desktop/NVE_work/Processing")
+setwd(sprintf("%s/NVE_work/Processing/",HOME))
 Sys.setenv(TZ="UTC")    
 
 ###########################################
