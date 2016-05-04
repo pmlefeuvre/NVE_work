@@ -33,22 +33,78 @@ Sys.setenv(TZ="UTC")
 
 # Load User Functions
 
+
 #########################################################################
+# Order in Compiled files:   
+# Year-DaY-Hour-LC6-LC1e-LC4-LC2a-LC97_2-LC97_1-LC7-LC2b-LC01-Battery
+LCname      <- c("LC6","LC1e","LC4","LC2a","LC97_2","LC97_1",
+                 "LC7","LC2b","LC01")
+lLC         <- length(LCname)
 
-##           EDITTING 1992-2013             ##
-# Call first command file to reorder columns of RAW data from 1992-2013
-source("Raw_editting_1992-2013.R")
+# Loop through the years
+year        <- seq(1992,2014)
+ly          <- length(year)
 
+################
+for (n in 1:ly){
+    
+    cat("\n---\n")
+    ######################################
+    ##      LOAD DATA FOR EACH YEAR     ##
+    ######################################
+    # Path and filename
+    path        <- sprintf("%i/ProcessingR",year[n])
+    filename    <- sprintf("%s/Compiled_%i.csv",path,year[n])
+    
+    # Load the file
+    colClasses  <- c(rep("character",3),rep("numeric",9)) 
+    data.year   <- read.csv(filename,colClasses=colClasses)
+    lrow        <- nrow(data.year)
+    lcol        <- ncol(data.year) 
+    cat("YEAR:",year[n],"--- Compiled_data - Total row:",lrow,"\n")
+    
+    
+    # Extract Dates and Convert into the Hydra2 format
+    Dates       <- as.POSIXct(strptime(sprintf("%s %s %s",data.year$Year,
+                                               data.year$Day,data.year$Hour),
+                                       "%Y %j %H%M"))
+    Dates_H2     <- strftime(Dates,"%Y%m%d/%H%M")
+    
+    ######################################
+    ##     NAs and DUPLICATED LINES     ##
+    ######################################    
+    # NAs are converted back to blanks
+    data.year[is.na(data.year)]<- (-9999)
+    
+    # Remove duplicated lines if any
+    cat("Number of duplicated lines:",sum(duplicated(data.year)),"\n")
+    data.year   <- data.year[!duplicated(data.year),]
+    # Recompute number of rows in case duplicates are removed
+    lrow        <- nrow(data.year)
+    
+    ######################################
+    ##   SAVE DATA FOR EACH LOAD CELL   ##
+    ######################################
+    for (i in 1:lLC){
+        
+        # Extract Data for each load cell
+        LCcol           <- which(colnames(data.year) == LCname[i])
+        data.year.LC    <- sprintf("%s %s",Dates_H2,data.year[,LCcol])
+        
+        ######################################
+        ##            SAVE DATA             ##
+        ######################################
+        # Path
+        path.out    <- sprintf("%s/ProcessingR/Hydra2",year[n])
+        dir.create(path.out,showWarnings = FALSE)
+        
+        # Filename
+        filename.out<- sprintf("%s_%s.csv",LCname[i],year[n])
+        
+        # Write out with new order of the columns
+        write.table(data.year.LC,sprintf("%s/%s",path.out,filename.out),
+                    row.names=F,col.names=sprintf("Date %s",LCname[i]),
+                    quote=F)
+    }
+}  
 
-##      MERGING OF ALL LOAD CELL DATA       ##
-# The merging_raw and plot_YEAR need to be compiled separately and in PATH
-source("Raw_merging_1992-2013.R")
-
-##  TRANSFER COMPILED DATA TO THE PROCESSING DIRECTORY  ##
-dir.create("../Processing/Data",showWarnings = FALSE)
-dir.create("../Processing/Data/RawR",showWarnings = FALSE)
-
-for (year in seq(1992,2013)){
-    file.copy(sprintf("%i/ProcessingR/Compiled_%i.csv",year,year),
-              sprintf("../Processing/Data/RawR/LC_%i.csv",year))
-}

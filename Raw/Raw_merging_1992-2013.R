@@ -40,7 +40,7 @@ colname.new <- c("Year","Day","Hour","LC6","LC1e","LC4","LC2a","LC97_2",
 lcol        <- length(colname.new) 
 
 # Loop through the years
-year        <- seq(1992,2013)
+year        <- seq(1992,2014)
 ly          <- length(year)
 
 
@@ -118,6 +118,11 @@ for (n in 1:ly){
     # Write out with new order of the columns
     write.table(data.year,sprintf("%s/%s",path.out,filename.out), sep=",",
                 row.names=F,col.names=T,quote=F)
+    
+    
+    # Write out Battery voltage
+    filename.out<- sprintf("Voltage_%s.csv",year[n])
+    write.zoo(voltage,sprintf("%s/%s",path.out,filename.out))
 }  
 
 

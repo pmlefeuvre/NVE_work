@@ -55,7 +55,7 @@ source("Raw_merging_1992-2013.R")
 dir.create("../Processing/Data",showWarnings = FALSE)
 dir.create("../Processing/Data/RawR",showWarnings = FALSE)
 
-for (year in seq(1992,2013)){
+for (year in seq(1992,2014)){
 file.copy(sprintf("%i/ProcessingR/Compiled_%i.csv",year,year),
           sprintf("../Processing/Data/RawR/LC_%i.csv",year))
 }
