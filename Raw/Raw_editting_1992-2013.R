@@ -39,7 +39,7 @@ colname.new <- c("Year","DoY","Hr:Min","LC6","LC1e","LC4","LC2a","LC97_2",
 lcol        <- length(colname.new) 
 
 # Loop through the years
-year        <- seq(1992,2013)
+year        <- seq(1992,2014)
 ly          <- length(year)
 
 ################
@@ -346,6 +346,9 @@ for (n in 1:ly){
         # Write out with new order of the columns
         write.table(data.new,sprintf("%s/%s",path.out,filename.out), sep=",",
                     row.names=F,col.names=F,quote = F)
+        
+        # Clean 
+        rm("data.old","data.new","order.data.new","order.data.old")
     }
 }
 
