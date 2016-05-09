@@ -67,7 +67,7 @@ format4Hydra2 <- function(year=2013){
         data.year   <- read.csv(filename,colClasses=colClasses)
         lrow        <- nrow(data.year)
         lcol        <- ncol(data.year) 
-        cat("YEAR:",year[n],"--- Compiled_data - Total row:",lrow,"\n")
+        cat("YEAR:",year[n],"--- Convert to Hydra2 format - Total row:",lrow,"\n")
         
         
         # Extract Dates and Convert into the Hydra2 format
@@ -77,16 +77,10 @@ format4Hydra2 <- function(year=2013){
         Dates_H2     <- strftime(Dates,"%Y%m%d/%H%M")
         
         ######################################
-        ##     NaNs and DUPLICATED LINES     ##
+        ##          NaNs Values             ##
         ######################################    
         # "Not a Number" values (also called NaN or NA) are converted back to -9999
         data.year[is.na(data.year)]<- (-9999)
-        
-        # Remove duplicated lines if any
-        cat("Number of duplicated lines:",sum(duplicated(data.year)),"\n")
-        data.year   <- data.year[!duplicated(data.year),]
-        # Recompute number of rows in case duplicates are removed
-        lrow        <- nrow(data.year)
         
         ######################################
         ##   SAVE DATA FOR EACH LOAD CELL   ##

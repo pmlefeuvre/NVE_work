@@ -43,7 +43,7 @@ ptm <- proc.time()
 print("Loading Load Cell Data")
 
 # Load the Data and combine them
-Years       <- 2013
+Years       <- seq(2011,2015)#2013 #seq(2011,2015)
 datafile    <- sprintf("Data/RawR/LC_%i.csv",Years)
 colClasses  <- c(rep("character",3),rep("numeric",9)) 
 LC_all      <- do.call("rbind",
@@ -94,7 +94,7 @@ is.na(LC_all)   <- (LC_all <= -9999)
 ###########################################################
 ###########################################################
 # Removing non Realistic FREQUENCY converting them in Not A Number
-maxF 		<- 3000;
+maxF 		<- 4000;
 cat(sprintf("Removing non-realistic FREQUENCY values (> %1.0f kHz) \n",maxF))
 
 LC_all$LC6      [ LC_all$LC6  > maxF]	<- NA;

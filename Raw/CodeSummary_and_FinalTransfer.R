@@ -41,7 +41,7 @@ Sys.setenv(TZ="UTC")
 #########################################################################
 
 # VARIABLE: Which year to process (can be an array of years)
-year=2013 #seq(1992,2015)
+year=2014 #seq(1992,2015)
 
 ##     REORDER LOAD CELL DATA (Columns) TO FIT DEFINED SEQUENCE     ##
 source("Raw_editing.R")
