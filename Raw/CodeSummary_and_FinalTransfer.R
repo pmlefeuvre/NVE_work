@@ -2,30 +2,24 @@
 
 #---------------------------------------------------------------#
 #       PROCESS LOAD CELL DATA TO FIT FILE STRUCTURE FOR        #
-#           THE PERIOD 1992-2013 AND TRANSFER COMPILED          #
+#           THE PERIOD 1992-2016 AND TRANSFER COMPILED          #
 #               FILES TO THE PROCESSING FOLDER                  #
 #                                                               #
 # NOTES:                                                        #
-# - The code loads all raw date and compiles them in:           #
-#   > Raw_editting_1992-2013.R                                  #
-#   > Raw_merging_1992-2013.R                                   #
+# - The code loads all raw date, reorders and compiles them in: #
+#   > Raw_editing_1992-2016.R                                  #
+#   > Raw_merging_1992-2016.R                                   #
 # - This code is a conversion of the bash code:                 #
 #   > CodeSummary_and_Transfer.sh lasted edited in 2013-10-10   #
 #                                                               #
 # Author: Pim Lefeuvre                         Date: 2016-04-22 #
-#                                       Last Update: 2016-04-22 #
+#                                       Last Update: 2016-05-06 #
 #                                                               #
 # Updates:                                                      #
+# - 2016-05-06: Edit text                                       #
 #                                                               #
 #---------------------------------------------------------------#
 
-##################################################################
-#       PROCESS LOAD CELL DATA TO FIT 1993-2013 SEQUENCE         #
-##################################################################
-#                                                                # 
-#          More details can be found in each bash file           #
-#                                                                # 
-##################################################################
 
 ##########################################
 # Clean up Workspace
@@ -46,20 +40,41 @@ Sys.setenv(TZ="UTC")
 
 #########################################################################
 
-##           EDITTING 1992-2013             ##
-# Call first command file to reorder columns of RAW data from 1992-2013
-source("Raw_editting_1992-2013.R")
+# VARIABLE: Which year to process (can be an array of years)
+year=2013 #seq(1992,2015)
+
+##     REORDER LOAD CELL DATA (Columns) TO FIT DEFINED SEQUENCE     ##
+source("Raw_editing.R")
+Raw_editing(year)
 
 
-##      MERGING OF ALL LOAD CELL DATA       ##
-# The merging_raw and plot_YEAR need to be compiled separately and in PATH
-source("Raw_merging_1992-2013.R")
+##      MERGE ALL FILES WITH LOAD CELL DATA PER YEAR      ##
+source("Raw_merging.R")
+Raw_merging(year)
+
+
+##      FORMAT THE COMPILED RAW DATA TO THE HYDRA II FORMAT     ##
+source("format4Hydra2.R")
+format4Hydra2(year)
+
 
 ##  TRANSFER COMPILED DATA TO THE PROCESSING DIRECTORY  ##
 dir.create("../Processing/Data",showWarnings = FALSE)
 dir.create("../Processing/Data/RawR",showWarnings = FALSE)
 
-for (year in seq(1992,2014)){
-file.copy(sprintf("%i/ProcessingR/Compiled_%i.csv",year,year),
-          sprintf("../Processing/Data/RawR/LC_%i.csv",year))
+for (year.cp in year){
+file.copy(sprintf("%i/ProcessingR/Compiled_%i.csv",year.cp,year.cp),
+          sprintf("../Processing/Data/RawR/LC_%i.csv",year.cp),
+          overwrite = TRUE)
 }
+
+
+
+
+
+
+
+###### ARCHIVE 
+
+
+

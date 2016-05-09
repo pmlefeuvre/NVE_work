@@ -43,8 +43,8 @@ ptm <- proc.time()
 print("Loading Load Cell Data")
 
 # Load the Data and combine them
-Years       <- seq(1992,2013)
-datafile    <- sprintf("Data/Raw/LC_%i.csv",Years)
+Years       <- 2013
+datafile    <- sprintf("Data/RawR/LC_%i.csv",Years)
 colClasses  <- c(rep("character",3),rep("numeric",9)) 
 LC_all      <- do.call("rbind",
                        lapply(datafile,
@@ -72,26 +72,27 @@ cat(sprintf("\n Data Span: from %s \n \t \ \ \ to \t %s \n\n",daterange[1], date
 
 
 ###########################################################
-rm(Years, datafile, Dates)
+rm(datafile, Dates)
 ###########################################################
 ###########################################################
 
-# Convert Character/Factors to numeric (kHz)
-# The values are then converted in Hz
-LC_all$LC6      <- as.numeric(LC_all$LC6[])*1000;
-LC_all$LC1e     <- as.numeric(LC_all$LC1e[])*1000;
-LC_all$LC4	    <- as.numeric(LC_all$LC4[])*1000;
-LC_all$LC2a     <- as.numeric(LC_all$LC2a[])*1000;
-LC_all$LC97_2   <- as.numeric(LC_all$LC97_2[])*1000;
-LC_all$LC97_1	<- as.numeric(LC_all$LC97_1[])*1000;
-LC_all$LC7	    <- as.numeric(LC_all$LC7[])*1000;
-LC_all$LC2b     <- as.numeric(LC_all$LC2b[])*1000;
-LC_all$LC01     <- as.numeric(LC_all$LC01[])*1000;
+# Conversion of the frequency from kHz into Hz
+LC_all$LC6      <- LC_all$LC6[]*1000;
+LC_all$LC1e     <- LC_all$LC1e[]*1000;
+LC_all$LC4	    <- LC_all$LC4[]*1000;
+LC_all$LC2a     <- LC_all$LC2a[]*1000;
+LC_all$LC97_2   <- LC_all$LC97_2[]*1000;
+LC_all$LC97_1	<- LC_all$LC97_1[]*1000;
+LC_all$LC7	    <- LC_all$LC7[]*1000;
+LC_all$LC2b     <- LC_all$LC2b[]*1000;
+LC_all$LC01     <- LC_all$LC01[]*1000;
 
-# Conversion of -99999 and 0 to Not A Number
+# Conversion of -9999 to Not A Number
 print("Replacing Data Gaps with NA values")
 is.na(LC_all)   <- (LC_all <= -9999)
 
+###########################################################
+###########################################################
 # Removing non Realistic FREQUENCY converting them in Not A Number
 maxF 		<- 3000;
 cat(sprintf("Removing non-realistic FREQUENCY values (> %1.0f kHz) \n",maxF))
@@ -119,7 +120,7 @@ LC_all$LC01     [ LC_all$LC01 > maxF] 	<- NA;
 # f_0$LC2a    <- 1106.0
 # f_0$LC97_2  <- c(1191.8,1150.6)
 # f_0$LC97_1  <- c(1230.0,1176.0)
-# f_0$LC7	    <- c(1115.0,1196.3)
+# f_0$LC7	  <- c(1115.0,1196.3)
 # f_0$LC2b    <- 1178.0
 # f_0$LC01    <- 1239.0
 
@@ -162,8 +163,17 @@ dir.create("Data/Zoo/Sub15mean", showWarnings = FALSE)
 dir.create("Data/Zoo/Sub_daily", showWarnings = FALSE)
 
 # Sub-sampling (2 MONTHS)
-start<-seq(as.Date("1992-11-01"),as.Date("2013-12-01"),by="2 months")
-end  <-seq(as.Date("1993-01-01"),as.Date("2014-01-01"),by="2 months")
+if(Years[1]==1992){
+    start<-seq(as.Date("1992-11-01"),
+               as.Date(sprintf("%i-12-01",last(Years))),  by="2 months")
+    end  <-seq(as.Date("1993-01-01"),
+               as.Date(sprintf("%i-01-01",last(Years)+1)),by="2 months")
+}else {
+    start<-seq(as.Date(sprintf("%i-01-01",Years[1])),
+               as.Date(sprintf("%i-12-01",last(Years))),  by="2 months")
+    end  <-seq(as.Date(sprintf("%i-03-01",Years[1])),
+               as.Date(sprintf("%i-01-01",last(Years)+1)),by="2 months")
+}
 
 for (i in 1:length(start)) {
     
@@ -173,7 +183,7 @@ for (i in 1:length(start)) {
     
     cat("\n","Subsampling of the LC Frequency time series from",sub.start,"to",sub.end,"\n")
     
-    sub_zoo_LC      <- subsample(zoo_LC_agg,sub.start,sub.end)
+    sub_zoo_LC      <- subsample(zoo_LC_agg,sub.start,sub.end,F)
     ########################################################################
     ########################################################################
     
@@ -200,7 +210,7 @@ for (i in 1:length(start)) {
     #---------------
     print("Proceed to one minute interval")
     LC_reg_min          <- izoo2rzoo(sub_zoo_LC,from=as.POSIXct(start[i]),
-                                     to=as.POSIXct(end[i])-1,
+                                     to=as.POSIXct(end[i])-60,
                                      date.fmt="%Y-%m-%d %H:%M:%S", tstep="min")
     
     # Save data in zoo format
