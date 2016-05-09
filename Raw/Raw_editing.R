@@ -310,7 +310,7 @@ Raw_editing <- function(year=2013){
                     # NewCol:1  - 2 -  3  - 4 - 5  - 6 -  7 -  8   -  9   - "" - "" - "" -  13
                     order.data.old              <- c(1,2,3,4,5,6,7,8,9,10)
                     order.data.new              <- c(1,2,3,4,5,6,7,8,9,13)
-                } else if (basename(filename[i]) %in% c("Nov13.dat","MAR240001.dat")){
+                } else if (basename(filename[i]) %in% c("Nov13.dat","MAR24001.dat")){
                     # Column Order in the file(s)  -- 2003
                     # Name: Station-DoY-Hr:Mn- 6 - 1e - 4 - 2a - 97_2 - 97_1 - 7  -Battery
                     # Col.:    1   - 2 -  3  - 4 - 5  - 6 - 7  -  8   -  9   - 10 -  11    
