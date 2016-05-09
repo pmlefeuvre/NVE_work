@@ -118,7 +118,7 @@ Load_ZooSub_month_freq <- function(sub.start="05/15/2010 09:00",
             dir.type <- "Sub15mean"
         }else if (type == "day_med"){
             dir.type <- "Sub_daily"
-        }
+        }else{stop("Data type must be: min, 15min_med, 15min_mean or day_med")}
         
         # Filename
         datafile    <-paste("Data/Zoo/",dir.type,"/Zoo_LCallfreq_", type,"_",

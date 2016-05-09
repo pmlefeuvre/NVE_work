@@ -79,8 +79,12 @@ Raw_merging <- function(year=2013){
         # "Not a Number" values (also called NaN or NA) are converted back to blanks
         data.year[is.na(data.year)]<-""
         
-        # Remove duplicated lines if any
+        # Compute and Print whether line and date duplicates exist 
         cat("Number of duplicated lines:",sum(duplicated(data.year)),"\n")
+        dupl.date <- sum(duplicated(data.year[,c(1,2,3)]))
+        if (dupl.date>0){cat("Number of duplicated dates:",dupl.date,"\n",
+                             "!!! some data are from another year !!!", "\n")}
+        # Remove duplicated lines if any
         data.year   <- data.year[!duplicated(data.year),]
         # Recompute number of rows in case duplicates are removed
         lrow        <- nrow(data.year)
