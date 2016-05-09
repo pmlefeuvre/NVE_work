@@ -16,6 +16,12 @@
 *.txt~
 *~*
 
+# Files
+##########
+LC6_f2013R.pdf
+LC97_2011.pdf
+
+
 # Data & Admin Folders #
 ########################
 /Administration
@@ -52,5 +58,4 @@
 /Raw/2011
 /Raw/2012
 /Raw/2013
-/Raw/2014LC6_f2013R.pdf
-LC97_2011.pdf
+/Raw/2014
