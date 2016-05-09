@@ -45,7 +45,7 @@
 ##########################################
 Plot_LCs_Pressure <- function(sub.start="2003-07-01",sub.end="2003-07-15",
                               LCname=c("LC97_1","LC97_2"),type="15min_mean",
-                              f.plot=FALSE){
+                              f.plot=FALSE,f.freq=FALSE){
     
     ############################################################################
     # Detect Operating System
@@ -64,6 +64,7 @@ Plot_LCs_Pressure <- function(sub.start="2003-07-01",sub.end="2003-07-15",
     
     # Load User functions
     source('f_Load_ZooSub_month.R')
+    source('f_Load_ZooSub_month_freq.R')
     source("../UserFunction/juliandate.R")
     
     ############################################################################
@@ -72,7 +73,8 @@ Plot_LCs_Pressure <- function(sub.start="2003-07-01",sub.end="2003-07-15",
     ####          Load Load Cell Data           ####
     ################################################
     # LOAD Data in "LC.reg.sub" to avoid reloading the data
-    LC.reg.sub  <- Load_ZooSub_month(sub.start,sub.end,type)
+    if (!f.freq){LC.reg.sub  <- Load_ZooSub_month(     sub.start,sub.end,type)
+    }else{       LC.reg.sub  <- Load_ZooSub_month_freq(sub.start,sub.end,type)}
     
     # Extract Column according to the order in LCname -AND-
     n.LC        <- match(LCname,names(LC.reg.sub))
@@ -83,7 +85,7 @@ Plot_LCs_Pressure <- function(sub.start="2003-07-01",sub.end="2003-07-15",
     # REMOVE called load cell that does not have any data 
     n.LC        <- n.LC[!is.na(n.LC)] 
     ln          <- length(n.LC)
-
+    
     
     ################################################
     ####      Replace NAs by Interpolation      ####
@@ -154,7 +156,7 @@ Plot_LCs_Pressure <- function(sub.start="2003-07-01",sub.end="2003-07-15",
     x.ticks.lab <- format(xticks,dt.lab)
     lx          <- length(x.ticks.lab) 
     x.ticks.lab[lx] <- sprintf("%s \n%s",x.ticks.lab[lx],strftime(t.end,"%Y"))
-
+    
     
     ## PRESSURE AXIS and parameters that defines density of y-axis labels
     # THE AXIS IS MADE TO ADAPT TO THE NUMBER OF LOAD CELLS AND SO PANELS
@@ -210,7 +212,7 @@ Plot_LCs_Pressure <- function(sub.start="2003-07-01",sub.end="2003-07-15",
         i <- panel.number();
         panel.grid(h=-1,v=-1,x=x,y=y);
         #if (i==1){panel.abline(h = seq(1.5,2.5,0.25), lwd=0.5,col="gray")}
-        panel.xyplot(x, y, type="l",col=col1[i],
+        panel.xyplot(x, y, type="b",col=col1[i],
                      lwd=lwd,main=NULL,cex=0.1,
                      ylab=ylabel[i]);
         panel.abline(h = 0, lty=3)
