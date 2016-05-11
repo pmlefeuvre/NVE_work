@@ -1,6 +1,6 @@
 #---------------------------------------------------------------#
-#       COMPUTE STATISTICS TO ASSESS QUALITY OF LOAD CELL,      #
-#           METEOROLOGICAL AND HYDROLOGICAL DATA                #
+#           COMPUTE STATISTICS TO ASSESS QUALITY OF             #
+#                       LOAD CELL DATA                          #
 #                                                               #
 #                                                               #
 # Author: Pim Lefeuvre                         Date: 2016-05-10 #
