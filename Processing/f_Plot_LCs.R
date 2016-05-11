@@ -20,8 +20,8 @@
 #        The plot can be saved in a pdf, but then is not viewed;#
 #        this is done by changing f.plot=FALSE to f.plot=TRUE.  #
 #                                                               #
-# Author: Pim Lefeuvre                         Date: 2016-13-08 #
-#                                       Last Update: 2016-13-08 #
+# Author: Pim Lefeuvre                         Date: 2015-08-13 #
+#                                       Last Update: 2016-04-13 #
 #                                                               #
 # It is the result of merging old codes from "Plot_LCs_month.R",#
 # "Plot_LCs_year.R","Plot_LCs_year2.R","Plot_LCs_year2_month.R",#
@@ -68,6 +68,10 @@ Plot_LCs_Pressure <- function(sub.start="2003-07-01",sub.end="2003-07-15",
     source("../UserFunction/juliandate.R")
     
     ############################################################################
+    # Time variable
+    t.start     <- as.POSIXct(sub.start)
+    t.end       <- as.POSIXct(sub.end)
+    daterange   <- paste(juliandate(sub.start),juliandate(sub.end),sep="-")
     
     ################################################
     ####          Load Load Cell Data           ####
@@ -81,11 +85,10 @@ Plot_LCs_Pressure <- function(sub.start="2003-07-01",sub.end="2003-07-15",
     
     # CHECK: if missing load cell data (i.e. column)
     check.LC    <- which(!LCname %in% names(LC.reg.sub))
-    if (length(check.LC)>0){cat(">> Skip",LCname[check.LC],": NO Data <<")} 
+    if (length(check.LC)>0){stop(sprintf(">> Skip %s : NO Data <<",LCname[check.LC]))} 
     # REMOVE called load cell that does not have any data 
     n.LC        <- n.LC[!is.na(n.LC)] 
     ln          <- length(n.LC)
-    
     
     ################################################
     ####      Replace NAs by Interpolation      ####
@@ -108,8 +111,8 @@ Plot_LCs_Pressure <- function(sub.start="2003-07-01",sub.end="2003-07-15",
         # Make folder where will be saved the data
         dir.create("Plots/Pressure",showWarnings = FALSE)
         # Include all figures in a pdf file!
-        filename<- sprintf("Plots/Pressure/PDF_LCs_%s.pdf", daterange)
-        pdf(file=filename,height=4)
+        filename<- sprintf("Plots/Pressure/PDF_%s_%s.pdf",LCname,daterange)
+        pdf(file=filename,height=5)
     }
     par(oma=c(1,1,1,1),cex=0.7)
     
@@ -127,10 +130,7 @@ Plot_LCs_Pressure <- function(sub.start="2003-07-01",sub.end="2003-07-15",
     ################################################
     ## TIME AXIS and parameters that defines density of x-axis labels
     # THE AXIS IS MADE TO ADAPT TO THE TIME SPAN FOR MAKING PRETTY PLOT
-    t.start     <- as.POSIXct(sub.start)
-    t.end       <- as.POSIXct(sub.end)
     dt          <- t.end-t.start
-    daterange   <- paste(juliandate(sub.start),juliandate(sub.end),sep="_")
     
     # Define label density and format of the time axis
     if         (dt < 30){

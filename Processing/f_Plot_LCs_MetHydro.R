@@ -36,7 +36,7 @@
 ##########################################
 Plot_LCs_MetHydro <- function(sub.start="2003-07-13",sub.end="2003-07-31",
                               LCname=c("LC97_1","LC97_2"),type="15min_mean",
-                              Q.station="Fonndal_crump",AT.station="Glomfjord",
+                              Q.station=c("Fonndal_crump","Subglacial"),AT.station="Glomfjord",
                               PP.station="Glomfjord",f.plot=FALSE){
     
     # ##########################################
@@ -81,35 +81,62 @@ Plot_LCs_MetHydro <- function(sub.start="2003-07-13",sub.end="2003-07-31",
     #---------------------------------------------------------------#
     #                       Load DISCHARGE DATA                     #
     #---------------------------------------------------------------#
-    Q.all.station <- c("Fonndal_crump","Fonndal_fjell")
+    Q.all.station <- c("Fonndal_crump","Fonndal_fjell","Engabrevatn","Engabreelv",
+                       "Subglacial","sedimentkammer")
+    if(length(Q.station)<2){stop("Add a second discharge station")}
     # Load hourly discharge (Original Data)
-    if (!exists("Q.Sub") || Q.station!=old.station[1]){
+    if (!exists("Q1") || any(!Q.station %in% old.station[1:2])){
         # Path defines whether Komplett or Historisk data are used
         Q.path  <- "Data/MetData/Discharge/KomplettNVEdata_20140606/"
         
-        # Load Discharge data and reformat in zoo time series    
-        # Sediment Chamber
-        filename<- list.files(Q.path,"sedimentkammer",full.names=T)
-        Q.Sc    <- read.csv(filename,F,";", colClasses=c("POSIXct","numeric"),skip=1,
-                            as.is=T,na.strings = "-9999.0000",blank.lines.skip=T)
-        Q.Sc    <- zoo(Q.Sc[,2],Q.Sc[,1])
-        Q.Sc[Q.Sc>30] <- NA
-        
-        # Fonndal_fjell or Fonndal_crump
-        filename<- list.files(Q.path,Q.station,full.names=T)
-        Q.F     <- read.csv(filename,F,";", colClasses=c("POSIXct","numeric"),skip=1,
-                            as.is=T,na.strings = "-9999.0000",blank.lines.skip=T)
-        Q.F     <- zoo(Q.F[,2],Q.F[,1])
-        
-        # Compute subglacial discharge
-        Q.Sub       <- merge(Q.Sc,Q.F)
-        Q.Sub$Q.F   <- na.approx(Q.Sub$Q.F,maxgap=6,na.rm=F) 
-        Q.Sub       <- Q.Sub$Q.Sc-Q.Sub$Q.F
+        if (sum(Q.station %in% c("Fonndal_crump","Fonndal_fjell","Subglacial"))==2){
+            # Load Discharge data and reformat in zoo time series    
+            # Sediment Chamber
+            filename<- list.files(Q.path,"sedimentkammer",full.names=T)
+            Q.Sc    <- read.csv(filename,F,";", colClasses=c("POSIXct","numeric"),skip=1,
+                                as.is=T,na.strings = "-9999.0000",blank.lines.skip=T)
+            Q.Sc    <- zoo(Q.Sc[,2],Q.Sc[,1])
+            Q.Sc[Q.Sc>30] <- NA
+            
+            
+            # Fonndal_fjell or Fonndal_crump
+            filename<- list.files(Q.path,Q.station,full.names=T)
+            Q.F     <- read.csv(filename,F,";", colClasses=c("POSIXct","numeric"),skip=1,
+                                as.is=T,na.strings = "-9999.0000",blank.lines.skip=T)
+            Q.F     <- zoo(Q.F[,2],Q.F[,1])
+            
+            # Compute subglacial discharge
+            Q.Sub       <- merge(Q.Sc,Q.F)
+            Q.Sub$Q.F   <- na.approx(Q.Sub$Q.F,maxgap=6,na.rm=F) 
+            Q.Sub       <- Q.Sub$Q.Sc-Q.Sub$Q.F
+            
+            Q1 <- Q.F
+            Q2 <- Q.Sub 
+            
+        }else {
+            
+            # Engabrevatn or Engabreelv or Sediment Chamber
+            filename<- list.files(Q.path,Q.station[1],full.names=T)
+            Q1     <- read.csv(filename,F,";", colClasses=c("POSIXct","numeric"),skip=1,
+                                as.is=T,na.strings = "-9999.0000",blank.lines.skip=T)
+            Q1     <- zoo(Q1[,2],Q1[,1])
+            
+            # Engabrevatn or Engabreelv or Sediment Chamber
+            filename<- list.files(Q.path,Q.station[2],full.names=T)
+            Q2     <- read.csv(filename,F,";", colClasses=c("POSIXct","numeric"),skip=1,
+                               as.is=T,na.strings = "-9999.0000",blank.lines.skip=T)
+            Q2     <- zoo(Q2[,2],Q2[,1])
+            
+            if ("sedimentkammer" %in% Q.station){
+                n <- which(Q.station=="sedimentkammer")
+                if (n==1){ Q1[Q1>30] <- NA }else{ Q2[Q2>30] <- NA }
+            }
+        }
         
         # Assign variable to avoid reloading
-        assign("Q.Sc" ,Q.Sc ,envir= .GlobalEnv)
-        assign("Q.F"  ,Q.F  ,envir= .GlobalEnv)
-        assign("Q.Sub",Q.Sub,envir= .GlobalEnv)
+        assign("Q1",Q1,envir= .GlobalEnv)
+        assign("Q2",Q2,envir= .GlobalEnv)
+        
         
     }
     
@@ -136,7 +163,7 @@ Plot_LCs_MetHydro <- function(sub.start="2003-07-13",sub.end="2003-07-31",
             if (AT.station=="Skjaeret" && year(t.start)<2009){
                 filename <- filename[1]
                 print(sprintf("LOAD: %s -- for period BEFORE 2009",basename(filename)))
-            }else{
+            }else if (AT.station=="Skjaeret" && year(t.start)>=2009){
                 filename <- filename[2]
                 print(sprintf("LOAD: %s -- for period AFTER 2009",basename(filename)))}
             
@@ -182,10 +209,10 @@ Plot_LCs_MetHydro <- function(sub.start="2003-07-13",sub.end="2003-07-31",
     #                           SUBSAMPLE                           #
     #---------------------------------------------------------------#
     # Subsample each time series
-    Q.Sub.sub   <- window(Q.Sub, start=sub.start,end=sub.end)
-    Q.F.sub     <- window(Q.F,   start=sub.start,end=sub.end)
-    AirT.sub    <- window(AirT,  start=sub.start,end=sub.end)
-    PP.sub      <- window(PP,    start=sub.start,end=sub.end)
+    Q1.sub      <- window(Q1,  start=sub.start,end=sub.end)
+    Q2.sub      <- window(Q2,  start=sub.start,end=sub.end)
+    AirT.sub    <- window(AirT,start=sub.start,end=sub.end)
+    PP.sub      <- window(PP,  start=sub.start,end=sub.end)
     
     
     #---------------------------------------------------------------#
@@ -195,10 +222,14 @@ Plot_LCs_MetHydro <- function(sub.start="2003-07-13",sub.end="2003-07-31",
         stop(sprintf("\nNO Air Temp. DATA at %s\nTRY with another station: %s",
                      AT.station,err))}
     # Check if there is data for Discharge
-    if(all(is.na(Q.F.sub))){
-        err <- paste(Q.all.station[!Q.all.station %in% Q.station],collapse=" or ")
+    if(all(is.na(Q1.sub))){
+        err <- paste(Q.all.station[!Q.all.station %in% Q.station[1]],collapse=" or ")
         stop(sprintf("\nNO Discharge DATA at %s\nTRY with another station: %s",
-                     Q.station,err))}
+                     Q.station[1],err))}
+    if(all(is.na(Q2.sub))){
+        err <- paste(Q.all.station[!Q.all.station %in% Q.station[2]],collapse=" or ")
+        stop(sprintf("\nNO Discharge DATA at %s\nTRY with another station: %s",
+                     Q.station[2],err))}
     # Check if there is data for Precipitation
     if(all(is.na(PP.sub))){
         err <- paste(PP.all.station[!PP.all.station %in% PP.station],collapse=" or ")
@@ -238,9 +269,10 @@ Plot_LCs_MetHydro <- function(sub.start="2003-07-13",sub.end="2003-07-31",
         path        <- sprintf("Plots/Pressure_MetData")
         dir.create(path,showWarnings = FALSE)
         # Include all figures in a pdf file!
-        filename    <- sprintf("Pressure_MetData_%s%s_%s-%s.pdf",
+        filename    <- sprintf("Pressure_MetData_%s%s_%s-%s_ATst%s_PPst%s_Qst%s%s.pdf",
                                LCname[1],LCname[2],
-                               juliandate(t.start),juliandate(t.end))
+                               juliandate(t.start),juliandate(t.end),
+                               AT.station,PP.station,Q.station[1],Q.station[2])
         pdf(sprintf("%s/%s",path,filename),height=5)
     }
     
@@ -249,9 +281,8 @@ Plot_LCs_MetHydro <- function(sub.start="2003-07-13",sub.end="2003-07-31",
     col         <- c("red","black","blue")
     col2        <- c("grey60","black")#,"red","orange","cyan","blue","grey")
     lty         <- c(1,1,3,3,3,3)
-    text.leg    <- c("Subglacial","Fonndal") 
     
-    Q.max       <- max(Q.Sub.sub,na.rm=T) 
+    Q.max       <- max(Q2.sub,na.rm=T) 
     AT.min      <- min(AirT.sub,na.rm=T)
     AT.max      <- max(AirT.sub,na.rm=T)
     PP.max      <- max(PP.sub,na.rm=T)
@@ -293,17 +324,17 @@ Plot_LCs_MetHydro <- function(sub.start="2003-07-13",sub.end="2003-07-31",
     ##### 2ND PLOT #####
     # Plot Discharge
     par(mar=c(1,left,1,right))
-    plot(na.approx(Q.F.sub),col=col2[1],xaxt="n",xlim=c(t.start,t.end),lwd=1,lty=3,
+    plot(na.approx(Q1.sub),col=col2[1],xaxt="n",xlim=c(t.start,t.end),lwd=1,lty=3,
          ylim=c(0,Q.max),ylab=expression(paste(Q," [",m^3,s^{-1},"]")),xaxs="i")
     # Background Grid
     my.grid.month.simple(t.start,t.end)
     # Points/Lines
-    points(Q.F.sub,col=col2[1],pch=19,cex=0.3)
-    lines(na.approx(Q.Sub.sub),lty=3,col=col2[2])
-    points(Q.Sub.sub,col=col2[2],pch=19,cex=0.3)
+    points(Q1.sub,col=col2[1],pch=19,cex=0.3)
+    lines(na.approx(Q2.sub),lty=3,col=col2[2])
+    points(Q2.sub,col=col2[2],pch=19,cex=0.3)
     
     # Legend
-    legend("topright",text.leg,pch=19,pt.cex=0.5,col=col2[c(2,1)],cex=0.7,lty=3,bg="white")
+    legend("topright",Q.station,pch=19,pt.cex=0.5,col=col2,cex=0.7,lty=3,bg="white")
     
     ##### 3RD PLOT #####
     # Plot Basal Pressure
