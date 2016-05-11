@@ -20,7 +20,6 @@ source("f_Plot_LCs_MetHydro.R")
 
 # Variables
 LCname      <- c("LC6","LC4")#c("LC97_1","LC97_2")#
-# Q.station   <- c("Fonndal_crump","Fonndal_fjell")
 # Q.station   <- list(c("Fonndal_crump","Subglacial"),
 #                     c("Fonndal_fjell","Subglacial"),
 #                     c("sedimentkammer","Engabrevatn"),
@@ -31,7 +30,6 @@ LCname      <- c("LC6","LC4")#c("LC97_1","LC97_2")#
 for (year in seq(1992,2015)){
     
     for (Q.station in list(c("sedimentkammer","Engabreelv"),
-                           c("sedimentkammer","Engabrevatn"),
                            c("Engabreelv","Engabrevatn"),
                            c("Fonndal_crump","Subglacial"),
                            c("Fonndal_fjell","Subglacial"))){

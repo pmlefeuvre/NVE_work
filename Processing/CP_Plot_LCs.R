@@ -26,15 +26,18 @@ Sys.setenv(TZ="UTC")
 source("f_Plot_LCs.R")
 
 # Variables
-LCname      <- "LC7"#c("LC01","LC1e","LC2a","LC2b","LC4","LC6","LC97_1","LC97_2")
+LCname      <- c("LC01","LC1e","LC2a","LC2b","LC4","LC6","LC7","LC97_1","LC97_2")
 
 for (year in seq(1992,2015)){
     
     for (i in seq(1:length(LCname))){
         
-        try(Plot_LCs_Pressure(sprintf("%i-01-01",year),
-                              sprintf("%i-01-01",year+1),
-                              LCname[i],type="15min_mean",f.plot=T))
+        if (year==1992){sub.start <- sprintf("%i-11-01",year)
+        }else{          sub.start <- sprintf("%i-01-01",year)}
+                        sub.end   <- sprintf("%i-01-01",year+1)
+        
+        try(Plot_LCs_Pressure(sub.start,sub.end,LCname[i],
+                              type="15min_mean",f.plot=T))
         
     } 
     

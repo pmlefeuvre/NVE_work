@@ -54,7 +54,7 @@ ptm <- proc.time()
 print("Loading Load Cell Data")
 
 # Load the Data and combine them
-Years       <- seq(2011,2015)#2013
+Years       <- seq(2010,2015)#2013
 datafile    <- sprintf("Data/RawR/LC_%i.csv",Years)
 colClasses  <- c(rep("character",3),rep("numeric",9)) 
 LC_all      <- do.call("rbind",
@@ -110,7 +110,7 @@ print("Computing Subglacial Pressure in bar")
 LC_all$LC6      <- -0.0000092248*(1061.5^2 - LC_all$LC6^2)  + (-0.32476);
 LC_all$LC1e     <-  0.0334466*(LC_all$LC1e   - 1157.3)+ 0.0000178058* (LC_all$LC1e   - 1157.3)^2 ;
 LC_all$LC4      <- -0.0000090465*(1105.0^2 - LC_all$LC4^2)  + (-0.31762);
-LC_all$LC2a	    <- -0.0000090971*(1106.0^2 - LC_all$LC2b^2) + (-0.32367);
+LC_all$LC2a	    <- -0.0000090971*(1106.0^2 - LC_all$LC2a^2) + (-0.32367);
 LC_all$LC2b     <-  0.0304178*(LC_all$LC2b   - 1178.0)  + 0.0000156223* (LC_all$LC2b - 1178.0)^2;
 LC_all$LC01     <-  0.0359029*(LC_all$LC01   - 1239.0)  + 0.0000170723* (LC_all$LC01 - 1239.0)^2;
 
@@ -129,9 +129,9 @@ if(2012 %in% Years){
     LC_all$LC97_1[t97.t12:lt]<- 0.0361260*(LC_all$LC97_1[t97.t12:lt] - 1176.0) + 0.0000164113*(LC_all$LC97_1[t97.t12:lt]- 1176.0)^2;
     
 }else if(last(Years)<2012){
-    ## Downstream Load Cell: LC97_2 replaced by LC12_1
+    ## Downstream Load Cell: LC97_2
     LC_all$LC97_2 <- 0.0352708*(LC_all$LC97_2 - 1191.8) + 0.0000168821*(LC_all$LC97_2 - 1191.8)^2;
-    ## Upstream Load Cell:   LC97_1 replaced by LC12_2
+    ## Upstream Load Cell:   LC97_1
     LC_all$LC97_1 <- 0.0373280*(LC_all$LC97_1 - 1230.0) + 0.0000181262*(LC_all$LC97_1 - 1230.0)^2;
     
 }else if(Years[1]>2012){
@@ -143,7 +143,7 @@ if(2012 %in% Years){
 
 ######### LC7 #########
 ## Replacement Load Cell 7a by LoadCell 7b (Observed in the data and Gaute's files -- Reasons unknown)
-## Date chosen because LC7 started recording again on 2003-11-11, but it is unsure what occurred then.
+## Date chosen because LC7 started recording again on 2003-11-11, but it is unsure what happened then.
 if(2003 %in% Years){
     t7a.t7b         <- which(LC_all$Dates==as.POSIXct("2003-315 00:00",format="%Y-%j %H:%M"))
     LC_all$LC7[1:t7a.t7b]   <-  0.0344475*(LC_all$LC7[1:t7a.t7b]    - 1115.0)  + 0.0000170808* (LC_all$LC7[1:t7a.t7b]  - 1115.0)^2;

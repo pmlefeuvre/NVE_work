@@ -266,13 +266,14 @@ Plot_LCs_MetHydro <- function(sub.start="2003-07-13",sub.end="2003-07-31",
     # Save Plot
     if (f.plot){
         # Make folder where will be saved the data
-        path        <- sprintf("Plots/Pressure_MetData")
+        path    <- sprintf("Plots/Pressure_MetData/%s",format(t.start,"%Y"))
+        dir.create("Plots/Pressure_MetData",showWarnings = FALSE)
         dir.create(path,showWarnings = FALSE)
         # Include all figures in a pdf file!
-        filename    <- sprintf("Pressure_MetData_%s%s_%s-%s_ATst%s_PPst%s_Qst%s%s.pdf",
-                               LCname[1],LCname[2],
-                               juliandate(t.start),juliandate(t.end),
-                               AT.station,PP.station,Q.station[1],Q.station[2])
+        filename<- sprintf("Pressure_MetData_%s%s_%s-%s_ATst%s_PPst%s_Qst%s%s.pdf",
+                           LCname[1],LCname[2],
+                           juliandate(t.start),juliandate(t.end),
+                           AT.station,PP.station,Q.station[1],Q.station[2])
         pdf(sprintf("%s/%s",path,filename),height=5)
     }
     

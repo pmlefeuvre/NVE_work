@@ -111,7 +111,8 @@ Raw_merging <- function(year=2013){
                                                    data.year[,2],data.year[,3]),
                                            "%Y %j %H%M"))
         voltage     <- zoo(data.year[,13],Dates)
-        
+        voltage     <- voltage[!is.na(index(voltage))] #SOLVE ISSUE WITH NA
+            
         # Remove the column with voltage data from the battery
         data.year <- data.year[,seq(1,12)]
         

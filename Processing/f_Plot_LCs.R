@@ -57,10 +57,8 @@ Plot_LCs_Pressure <- function(sub.start="2003-07-01",sub.end="2003-07-15",
     Sys.setenv(TZ="UTC")        
     
     # Load libraries (!!! NEED TO BE PRE-INSTALLED !!!)
-    library(zoo)
-    library(chron)
-    library(lattice)
-    library(signal)
+    library(zoo)        #cmd: zoo
+    library(lattice)    #plot: xy.plot
     
     # Load User functions
     source('f_Load_ZooSub_month.R')
@@ -109,9 +107,11 @@ Plot_LCs_Pressure <- function(sub.start="2003-07-01",sub.end="2003-07-15",
     ################################################
     if (f.plot){
         # Make folder where will be saved the data
+        path    <- sprintf("Plots/Pressure/%s",format(t.start,"%Y"))
         dir.create("Plots/Pressure",showWarnings = FALSE)
+        dir.create(path,showWarnings = FALSE)
         # Include all figures in a pdf file!
-        filename<- sprintf("Plots/Pressure/PDF_%s_%s.pdf",LCname,daterange)
+        filename<- sprintf("%s/PDF_%s_%s.pdf",path,LCname,daterange)
         pdf(file=filename,height=5)
     }
     par(oma=c(1,1,1,1),cex=0.7)
