@@ -164,6 +164,11 @@ AT.reg   <- izoo2rzoo(AT.agg,t.start,t.end,tstep="days")
 timespan(AT.reg,10)
 
 
+
+#---------------------------------------------------------------#
+#                       Plot Data Timespan                      #
+#---------------------------------------------------------------#
+
 ####
 # Filenames
 stn         <- c(names(LC.reg.sub),names(Q.all),names(AT.all))
@@ -199,54 +204,65 @@ for (i in 1:l){
     }
 }
 
+
+#---------------------------------------------------------------#
+#           Plot Data Timespan with inversed y-axis             #
+#---------------------------------------------------------------#
 par(mar=c(2.1,5.1,1.1,1.1))
-# Inversed y axis
+# Variable and Station names
 l2      <- l-2
 stn2    <- gsub("AT_","",gsub("Q_","",rev(stn[1:l2])))
+lwd     <- 10 
 
+#Plot
 plot(c(as.POSIXct(t.start),as.POSIXct(t.end)),c(1,l2),type="n",
      xlab="",ylab="",yaxt="n",xaxt="n",xaxs="i",ylim=c(1.5,l2-.5))
+# Background rectangles
 rect(t.start-yr,l2-(lLC-.5),t.end+yr,l2+1   ,col="grey80",border=NA)
-rect(t.start-yr,0          ,t.end+yr,l2-(lLC+lQ)-.5,col="grey80",border=NA)
+rect(t.start-yr,0          ,t.end+yr,l2-(lLC+lQ)+.5,col="grey80",border=NA)
+# Grid and Axis
 my.grid.year(as.POSIXct(t.start),as.POSIXct(t.end))
 axis(2,seq(1:l2),stn2,las=1,cex.axis=.7,line=-.8,col=NA)
+yr.seq <- seq(as.POSIXct("1993-01-01"),as.POSIXct("2016-01-01"),"year")
+axis.POSIXct(3,yr.seq,yr.seq,tck=-0.01)
+axis.POSIXct(3,yr.seq,yr.seq,"%Y",line=-.8,cex.axis=.6,col=NA)
 
 for (i in 1:l2){
     
     if(grepl("Glomfjord",datafile[i])){
         tmp <- read.csv(datafile[i],as.is=T,colClasses="POSIXct")
         lt  <- nrow(tmp)
-        
         for (j in 1:lt){lines(c(tmp[j,1],tmp[j,2]),rep(l2-i+1,2),
-                              lwd=6,col=col[i])}
+                              lwd=lwd,col=col[i],lend='butt')}
         
         tmp <- read.csv(datafile[22],as.is=T,colClasses="POSIXct")
         lt <- nrow(tmp)
-        
         for (j in 1:lt){
-            lines(c(tmp[j,1],tmp[j,2]),rep(l2-i+1.25,2),lwd=6,col="blue")
-        }
+            lines(c(tmp[j,1],tmp[j,2]),rep(l2-i+1.25,2),lwd=lwd,
+                  col="white",lend='butt')}
+        text(tmp[1,1]+12*30*24*3600,rep(l2-i+1.25,2),"Precip.",cex=.5)
         
     }else if(grepl("Reipaa",datafile[i])){
         tmp <- read.csv(datafile[i],as.is=T,colClasses="POSIXct")
         lt  <- nrow(tmp)
-        
         for (j in 1:lt){lines(c(tmp[j,1],tmp[j,2]),rep(l2-i+1,2),
-                              lwd=6,col=col[i])}
+                              lwd=lwd,col=col[i],lend='butt')}
         
         tmp <- read.csv(datafile[23],as.is=T,colClasses="POSIXct")
         lt <- nrow(tmp)
-        
         for (j in 1:lt){
-            lines(c(tmp[j,1],tmp[j,2]),rep(l2-i+1.25,2),lwd=6,col="blue")
-        }
+            lines(c(tmp[j,1],tmp[j,2]),rep(l2-i+1.25,2),lwd=lwd,
+                  col="white",lend='butt')}
+        text(tmp[1,1]+12*30*24*3600,rep(l2-i+1.25,2),"Precip.",cex=.5)
+        
     }else{
         
         tmp <- read.csv(datafile[i],as.is=T,colClasses="POSIXct")
         lt <- nrow(tmp)
         
         for (j in 1:lt){
-            lines(c(tmp[j,1],tmp[j,2]),rep(l2-i+1,2),lwd=6,col=col[i])
+            lines(c(tmp[j,1],tmp[j,2]),rep(l2-i+1,2),lwd=lwd,
+                  col=col[i],lend='butt')
         }
     }
 }

@@ -25,7 +25,8 @@ LC97_2011.pdf
 # Data & Admin Folders #
 ########################
 /Administration
-/Documentation
+/Documentation/Upload_LCdata
+/Documentation/Data_assessment/TimeSpanData
 /MetData/DischargeSSL_corrections/Data
 /MetData/DischargeSSL_corrections/Plots
 /MetData/Engabreen_Temperature_Precipitation/Raw
