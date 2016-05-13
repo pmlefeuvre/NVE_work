@@ -26,12 +26,14 @@ Sys.setenv(TZ="UTC")
 # Load library
 source("f_Load_ZooSub_month.R")
 
+#---------------------------------------------------------------#
 # Assign empty arrays
-out <- matrix(NA,(2015-1992)*10,11)
+Years <- seq(1992,2016)
+out <- matrix(NA,length(Years)*10,11)
 n   <- 0 
 
 # Loop through the years
-for (year in seq(1992,2015)){
+for (year in Years){
     
     # Load data
     if (year==1992){sub.start <- sprintf("%i-11-01",year)

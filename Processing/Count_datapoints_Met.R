@@ -25,6 +25,7 @@ setwd(sprintf("%s/NVE_work/Processing/",HOME))
 Sys.setenv(TZ="UTC")      
 
 # Load library
+library(zoo)
 
 # Load Userfunction
 source("../UserFunction/subsample.R")
@@ -45,7 +46,7 @@ if (!exists("AT.Gl")){
     AT.Ra   <- read.zoo(sprintf("%s/%s_AT_full.csv",AT.path,"Reipaa"),
                         sep=",",FUN=as.POSIXct)
     
-    AT.path <- "Data/MetData/AirTemp/KomplettNVEdata_20140606"
+    AT.path <- "Data/MetData/AirTemp/KomplettNVEdata_20160512"
     # Engabrevatn
     filename<- list.files(AT.path,"Engabrevatn",full.names=T)
     AT.Evat   <- read.csv(filename,F,";", colClasses=c("POSIXct","numeric"),skip=1,
@@ -84,12 +85,14 @@ if (!exists("PP.Gl")){
 # MERGE ALL DISCHARGE data
 all     <- merge(AT.Gl,AT.Ra,AT.Skj1,AT.Skj2,AT.Evat,PP.Gl,PP.Ra)
 
+
 # Assign empty arrays
-out <- matrix(NA,(2016-1992)*ncol(all),11)
+Years <- seq(1992,2016)
+out <- matrix(NA,length(Years)*ncol(all),11)
 n   <- 0 
 
 # Loop through the years
-for (year in seq(1992,2014)){
+for (year in Years){
     
     # Load data
     sub.start   <- sprintf("%i-01-01",year)

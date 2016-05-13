@@ -54,7 +54,7 @@ ptm <- proc.time()
 print("Loading Load Cell Data")
 
 # Load the Data and combine them
-Years       <- seq(2010,2015)#2013
+Years       <- seq(2011,2014)#2013
 datafile    <- sprintf("Data/RawR/LC_%i.csv",Years)
 colClasses  <- c(rep("character",3),rep("numeric",9)) 
 LC_all      <- do.call("rbind",
@@ -71,6 +71,23 @@ Dates 		<- strptime(paste(Year,Day,Hour),"%Y %j %H%M");
 # Show existing duplicates of date
 Dates[duplicated(Dates)]
 
+###########################################################
+###                 Date Correction                     ###
+###########################################################
+# Date delayed by a day from 2012 due to leap year and 
+# Corrected in 2014 (file: trykk_aug001.dat)
+# 113,79,1346,1.7771,.24756,1.7757,1.6899,1.4582,1.2273,-99999,
+# 113,80,1346,1.7774,.24308,1.7756,1.6906,1.4581,1.2696,-99999
+# Correction in R +24*3600 (+1day) 
+
+if(any(c(2012,2013,2014) %in% Years)){
+    print("Add a day to index of LCs due to delay in datalogger clock From 2012 To 2014")
+    corr.t1     <- min(which(Dates>=as.POSIXct("2012-03-18 19:33")))
+    corr.t2     <- max(which(Dates<=as.POSIXct("2014-03-20 13:46")))
+    Dates[corr.t1:corr.t2]   <- Dates[corr.t1:corr.t2]+24*3600 
+}
+
+###########################################################
 # Recreate dataframe with the formatted date (Replace Year, Dates & Hours)
 lcol        <- ncol(LC_all)
 LC_all      <- cbind(Dates,LC_all[,4:lcol])

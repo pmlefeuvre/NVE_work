@@ -35,28 +35,28 @@ source("../UserFunction/subsample.R")
 if (!exists("Q.Sc")){
     # Q.all.station <- c("sedimentkammer","Fonndal_crump","Fonndal_fjell")
     # Path
-    Q.path  <- "Data/MetData/Discharge/KomplettNVEdata_20140606"
+    Q.path  <- "Data/MetData/Discharge/KomplettNVEdata_20160512"
     
     # Sediment Chamber
-    filename<- list.files(Q.path,"sedimentkammer",full.names=T)
+    filename<- list.files(Q.path,"SedimentChamber",full.names=T)
     Q.Sc    <- read.csv(filename,F,";", colClasses=c("POSIXct","numeric"),skip=1,
                         as.is=T,na.strings = "-9999.0000",blank.lines.skip=T)
     Q.Sc    <- zoo(Q.Sc[,2],Q.Sc[,1])
     Q.Sc[Q.Sc>30] <- NA
     
     # Fonndal_crump
-    filename<- list.files(Q.path,"Fonndal_crump",full.names=T)
+    filename<- list.files(Q.path,"FonndalCrump",full.names=T)
     Q.Fc    <- read.csv(filename,F,";", colClasses=c("POSIXct","numeric"),skip=1,
                         as.is=T,na.strings = "-9999.0000",blank.lines.skip=T)
     Q.Fc    <- zoo(Q.Fc[,2],Q.Fc[,1])
     
     # Fonndal_fjellsterkel
-    filename<- list.files(Q.path,"Fonndal_fjell",full.names=T)
+    filename<- list.files(Q.path,"FonndalFjell",full.names=T)
     Q.Ff    <- read.csv(filename,F,";", colClasses=c("POSIXct","numeric"),skip=1,
                         as.is=T,na.strings = "-9999.0000",blank.lines.skip=T)
     Q.Ff    <- zoo(Q.Ff[,2],Q.Ff[,1])
     
-    # Compute subglacial discharge with Fonndal_crump and Fonndal_fjell
+    # Compute subglacial discharge with FonndalCrump and FonndalFjell
     Q.SubFc      <- merge(Q.Sc,Q.Fc)
     Q.SubFc$Q.Fc <- na.approx(Q.SubFc$Q.Fc,maxgap=6,na.rm=F) 
     Q.SubFc      <- Q.SubFc$Q.Sc-Q.SubFc$Q.Fc
@@ -66,7 +66,7 @@ if (!exists("Q.Sc")){
     
     
     # Engabrevatne
-    filename<- list.files(Q.path,"Engabrevatne",full.names=T)
+    filename<- list.files(Q.path,"Engabrevatn",full.names=T)
     Q.Evat    <- read.csv(filename,F,";", colClasses=c("POSIXct","numeric"),skip=1,
                         as.is=T,na.strings = "-9999.0000",blank.lines.skip=T)
     Q.Evat    <- zoo(Q.Evat[,2],Q.Evat[,1])
@@ -82,12 +82,14 @@ if (!exists("Q.Sc")){
     colnames(Q.all) <- c("QFc","QFf","QSc","QSubFc","QSubFf","Q.Eelv","Q.Evat")
 }
 
+
 # Assign empty arrays
-out <- matrix(NA,(2016-1992)*7,11)
+Years <- seq(1992,2016)
+out <- matrix(NA,length(Years)*ncol(Q.all),11)
 n   <- 0 
 
 # Loop through the years
-for (year in seq(1992,2014)){
+for (year in Years){
     
     # Load data
     sub.start   <- sprintf("%i-01-01",year)

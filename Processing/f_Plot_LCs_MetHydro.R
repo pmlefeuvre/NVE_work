@@ -6,7 +6,7 @@
 #                                                               #
 #                                                               #
 # Author: Pim Lefeuvre                         Date: 2015-04-23 #
-#                                       Last Update: 2016-04-20 #
+#                                       Last Update: 2016-05-12 #
 #                                                               #
 # Updates:                                                      #
 # - 2016-04-14: Reformat to give code to NVE.                   #
@@ -26,7 +26,7 @@
 # sub.end     <- "2003-07-31"
 # LCname      <- c("LC6","LC4")#"LC97_1","LC97_2",
 # type        <- "15min_mean"
-# Q.station   <- "Fonndal_crump"#"Fonndal_fjell"
+# Q.station   <- "FonndalCrump"#"FonndalFjell"
 # AT.station  <- "Glomfjord"#"Reipaa","Engabrevatn","Skjaeret"
 # PP.station  <- "Glomfjord"#"Reipaa"
 # f.plot      <- FALSE
@@ -36,7 +36,7 @@
 ##########################################
 Plot_LCs_MetHydro <- function(sub.start="2003-07-13",sub.end="2003-07-31",
                               LCname=c("LC97_1","LC97_2"),type="15min_mean",
-                              Q.station=c("Fonndal_crump","Subglacial"),AT.station="Glomfjord",
+                              Q.station=c("FonndalCrump","Subglacial"),AT.station="Glomfjord",
                               PP.station="Glomfjord",f.plot=FALSE){
     
     # ##########################################
@@ -81,25 +81,25 @@ Plot_LCs_MetHydro <- function(sub.start="2003-07-13",sub.end="2003-07-31",
     #---------------------------------------------------------------#
     #                       Load DISCHARGE DATA                     #
     #---------------------------------------------------------------#
-    Q.all.station <- c("Fonndal_crump","Fonndal_fjell","Engabrevatn","Engabreelv",
-                       "Subglacial","sedimentkammer")
+    Q.all.station <- c("FonndalCrump","FonndalFjell","Engabrevatn","Engabreelv",
+                       "Subglacial","SedimentChamber")
     if(length(Q.station)<2){stop("Add a second discharge station")}
     # Load hourly discharge (Original Data)
     if (!exists("Q1") || any(!Q.station %in% old.station[1:2])){
         # Path defines whether Komplett or Historisk data are used
-        Q.path  <- "Data/MetData/Discharge/KomplettNVEdata_20140606/"
+        Q.path  <- "Data/MetData/Discharge/KomplettNVEdata_20160512/"
         
-        if (sum(Q.station %in% c("Fonndal_crump","Fonndal_fjell","Subglacial"))==2){
+        if (sum(Q.station %in% c("FonndalCrump","FonndalFjell","Subglacial"))==2){
             # Load Discharge data and reformat in zoo time series    
             # Sediment Chamber
-            filename<- list.files(Q.path,"sedimentkammer",full.names=T)
+            filename<- list.files(Q.path,"SedimentChamber",full.names=T)
             Q.Sc    <- read.csv(filename,F,";", colClasses=c("POSIXct","numeric"),skip=1,
                                 as.is=T,na.strings = "-9999.0000",blank.lines.skip=T)
             Q.Sc    <- zoo(Q.Sc[,2],Q.Sc[,1])
             Q.Sc[Q.Sc>30] <- NA
             
             
-            # Fonndal_fjell or Fonndal_crump
+            # FonndalFjell or FonndalCrump
             filename<- list.files(Q.path,Q.station,full.names=T)
             Q.F     <- read.csv(filename,F,";", colClasses=c("POSIXct","numeric"),skip=1,
                                 as.is=T,na.strings = "-9999.0000",blank.lines.skip=T)
@@ -127,8 +127,9 @@ Plot_LCs_MetHydro <- function(sub.start="2003-07-13",sub.end="2003-07-31",
                                as.is=T,na.strings = "-9999.0000",blank.lines.skip=T)
             Q2     <- zoo(Q2[,2],Q2[,1])
             
-            if ("sedimentkammer" %in% Q.station){
-                n <- which(Q.station=="sedimentkammer")
+            # Disregard Discharge>30 m^3/sec because erroneous calibration curve
+            if ("SedimentChamber" %in% Q.station){
+                n <- which(Q.station=="SedimentChamber")
                 if (n==1){ Q1[Q1>30] <- NA }else{ Q2[Q2>30] <- NA }
             }
         }
@@ -156,7 +157,7 @@ Plot_LCs_MetHydro <- function(sub.start="2003-07-13",sub.end="2003-07-31",
         
         # Engabrevatn or Skjaeret (2 datasets)
         if (AT.station %in% c("Engabrevatn","Skjaeret")){
-            AT.path <- "Data/MetData/AirTemp/KomplettNVEdata_20140606"
+            AT.path <- "Data/MetData/AirTemp/KomplettNVEdata_20160512"
             filename<- list.files(AT.path,AT.station,full.names=T)
             
             # Define which data to load for Skjaeret station 
@@ -241,22 +242,10 @@ Plot_LCs_MetHydro <- function(sub.start="2003-07-13",sub.end="2003-07-31",
     #---------------------------------------------------------------#
     #                   Load PRESSURE/LOAD CELL DATA                #
     #---------------------------------------------------------------#
-    # DATE CORRECTION
-    if(t.start > as.POSIXct("2012-01-01")){
-        # Load Pressure Data
-        LC.reg.sub  <- Load_ZooSub_month(t.start-24*3600,sub.end,type=type)
-        LC.n        <- which(names(LC.reg.sub) %in% LCname) 
-        LC          <- LC.reg.sub[,LC.n,drop=F]
-        
-        print("Add a day to index of LCs due to delay in datalogger clock after 2012")
-        index(LC)        <- index(LC)+24*3600
-    } else {
         # Load Pressure Data
         LC.reg.sub  <- Load_ZooSub_month(sub.start,sub.end,type=type)
         LC.n        <- which(names(LC.reg.sub) %in% LCname) 
         LC          <- LC.reg.sub[,LC.n,drop=F]
-    }
-    
     
     
     #---------------------------------------------------------------#
