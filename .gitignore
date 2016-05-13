@@ -4,6 +4,10 @@
 *.dat
 *.DAT
 
+# Images #
+#####################
+*.png
+
 # R generated files #
 #####################
 *.Rhistory
@@ -25,7 +29,7 @@ LC97_2011.pdf
 # Data & Admin Folders #
 ########################
 /Administration
-/Documentation/Upload_LCdata
+/Documentation/Upload_LCdata/Figures
 /Documentation/Data_assessment/TimeSpanData
 /MetData/DischargeSSL_corrections/Data
 /MetData/DischargeSSL_corrections/Plots
