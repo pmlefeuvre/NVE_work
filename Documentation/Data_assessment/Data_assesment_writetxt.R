@@ -16,9 +16,11 @@ def.par <- par(no.readonly = TRUE)
 # ##########################################
 
 setwd("~/Desktop/NVE_work/Documentation/Data_assessment")
-#
-library(tools)
 
+# Load library
+library(tools) #
+
+###########
 # Read LC data
 LC  <- read.csv("stats_LCs_year_short.csv")
 LC  <- LC[!is.na(LC[,1]),]
@@ -42,14 +44,27 @@ Q   <- Q[Q[,4]>0,]
 levels(Q[,2])  <- c("Engabreelv","Engabrevatn","Fonndal_crump","Fonndal_fjell",
                     "SedimentChamber","Subglacial(Fc)","Subglacial(Ff)")
 
-sink("Data_assessment_short.txt")
+# Read Discharge data
+Sdt <- read.csv("stats_Sdt_year_short.csv")
+Sdt <- Sdt[!is.na(Sdt[,1]),]
+Sdt <- Sdt[Sdt[,4]>0,]
+# Replace levels
+levels(Sdt[,2])  <- c("Min.Engabreelv","Min.Engabrevatn","Min.SedimentChamber",
+                      "Org.Engabreelv","Org.Engabrevatn","Org.SedimentChamber")
+
+# Read comments and Noise level(not implemented)
+
+# Creat Rich Text File
+sink("Data_assessment_short.rtf")
+cat("{\\rtf1\\ansi{\\fonttbl\\f0\\fswiss Helvetica;}\\f0\\pard")
+
 for (year in seq(1992,2016)){
     
-    cat("\n>",year)
+    cat("\\line {\\b >",year,"}")
     # Load Cells
-    cat("\nLoad cells\n")
+    cat("\\line{\\i Load cells}\\line")
     for (i in which(LC[,1]==year)){
-        cat(sprintf("- %s: %i days (%i pts) --- Noise: low ---\n",
+        cat(sprintf("- %s: %i days (%i pts)\\line",
                     LC[i,2],LC[i,4],LC[i,3]))
     }
     
@@ -60,17 +75,17 @@ for (year in seq(1992,2016)){
         # Air Temperature
         if(file_path_sans_ext(Met[i,2])=="AT"){
             A.t=A.t+1
-            if(A.t==1){cat("\nAir Temperature\n")}
+            if(A.t==1){cat("\\line{\\i Air Temperature}\\line")}
             
-            cat(sprintf("- %s: %i days (%i pts) --- Noise: low ---\n",
+            cat(sprintf("- %s: %i days (%i pts)\\line",
                         file_ext(Met[i,2]),Met[i,4],Met[i,3]))
         }
         # Precipitation
         if(file_path_sans_ext(Met[i,2])=="PP"){
             P.t=P.t+1
-            if(P.t==1){cat("\nPrecipitation\n")}
+            if(P.t==1){cat("\\line{\\i Precipitation}\\line")}
             
-            cat(sprintf("- %s: %i days (%i pts) --- Noise: low ---\n",
+            cat(sprintf("- %s: %i days (%i pts)\\line",
                         file_ext(Met[i,2]),Met[i,4],Met[i,3]))
         }
     }
@@ -79,10 +94,30 @@ for (year in seq(1992,2016)){
     for (i in which(Q[,1]==year)){
         # Discharge
         Q.t=Q.t+1
-        if(Q.t==1){cat("\nDischarge\n")}
+        if(Q.t==1){cat("\\line{\\i Discharge}\\line")}
         
-        cat(sprintf("- %s: %i days (%i pts) --- Noise: low ---\n",
+        cat(sprintf("- %s: %i days (%i pts)\\line",
                     Q[i,2],Q[i,4],Q[i,3]))
     }
+    # Sediment Conc. data
+    Min.t <- 0
+    Org.t <- 0
+    # Mineral Sediment Concentration
+    n <- which(Sdt[,1]==year)
+    for (i in which(file_path_sans_ext(Sdt[n,2])=="Min")){
+        Min.t <- Min.t+1
+        if(Min.t==1){cat("\\line{\\i Mineral Sediment Concentration}\\line")}
+        cat(sprintf("- %s: %i days (%i pts)\\line",
+                    file_ext(Sdt[n[i],2]),Sdt[n[i],4],Sdt[n[i],3]))
+    }
+    # Organic Sediment Concentration
+    for (i in which(file_path_sans_ext(Sdt[which(Sdt[,1]==year),2])=="Org")){
+        Org.t <- Org.t+1
+        if(Org.t==1){cat("\\line{\\i Organic Sediment Concentration}\\line")}
+        cat(sprintf("- %s: %i days (%i pts)\\line",
+                    file_ext(Sdt[n[i],2]),Sdt[n[i],4],Sdt[n[i],3]))
+    }
+    cat("\\page")
 }
+cat("\\par}")
 sink()

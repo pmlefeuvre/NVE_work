@@ -25,6 +25,7 @@ setwd(sprintf("%s/NVE_work/Processing/",HOME))
 Sys.setenv(TZ="UTC")      
 
 # Load library
+library(zoo)
 
 # Load Userfunction
 source("../UserFunction/subsample.R")
