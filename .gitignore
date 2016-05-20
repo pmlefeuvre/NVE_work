@@ -31,6 +31,7 @@ LC97_2011.pdf
 /Administration
 /Documentation/Upload_LCdata/Figures
 /Documentation/Data_assessment/TimeSpanData
+/Documentation/Data_assessment/Picture
 /MetData/DischargeSSL_corrections/Data
 /MetData/DischargeSSL_corrections/Plots
 /MetData/Engabreen_Temperature_Precipitation/Raw
@@ -65,3 +66,5 @@ LC97_2011.pdf
 /Raw/2012
 /Raw/2013
 /Raw/2014
+
+*.ai
