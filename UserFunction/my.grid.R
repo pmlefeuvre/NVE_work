@@ -55,27 +55,10 @@ my.grid.week.year <-function(t.start,t.end){
     lab <- sprintf("%s\n%s", format(max(maj.ticks),format="%Y"),
                    format(max(maj.ticks),format="%d %b"))
     axis.POSIXct(1,at=max(maj.ticks),labels=lab)
+    
+    # Add grid
     grid(nx=NA, ny=NULL)
     abline(v=maj.ticks2,col="black", lty="dotted", lwd=par("lwd"))
-}
-
-my.grid.week2.year <-function(t.start,t.end,ax=1,col="grey",lwd=2,...){
-    t.start2    <- trunc(t.start,"days")
-    t.end2      <- trunc(t.end,"days")
-    min.ticks   <- seq(t.start2,t.end,"2 hours")
-    maj.ticks   <- seq(t.start2,t.end2,"days")
-    maj.ticks2  <- seq(t.start2,t.end2,"2 days")
-    axis.POSIXct(ax,at=min.ticks,labels=F,tcl=-0.2)
-    axis.POSIXct(ax,at=maj.ticks[-length(maj.ticks)],labels=F,tcl=-0.4)
-    axis.POSIXct(ax,at=maj.ticks2[-length(maj.ticks2)],cex.axis=0.7,lwd=lwd,
-                 labels=format(maj.ticks2[-length(maj.ticks2)],format="%d %b"),...)
-    # Add year
-    lab <- sprintf("%s\n%s", format(max(maj.ticks),format="%Y"),
-                   format(max(maj.ticks),format="%d %b"))
-    axis.POSIXct(ax,at=max(maj.ticks),labels=lab,lwd=lwd,
-                 cex.axis=0.8,...)
-    # Add grid
-    abline(v=maj.ticks,col=col, lty="dotted", lwd=par("lwd"))
 }
 
 my.grid.week.nogrid <-function(t.start,t.end,ax=1,...){
@@ -107,6 +90,45 @@ my.grid.week.simple <-function(t.start,t.end,ax=1,...){
     # Add grid
     grid(nx=NA, ny=NULL)
     abline(v=maj.ticks2,col="black", lty="dotted", lwd=par("lwd"))
+}
+
+my.grid.week2.year <-function(t.start,t.end,ax=1,col="black",lwd=2,...){
+    t.start2    <- trunc(t.start,"days")
+    t.end2      <- trunc(t.end,"days")
+    min.ticks   <- seq(t.start2,t.end,"2 hours")
+    maj.ticks   <- seq(t.start2,t.end2,"days")
+    maj.ticks2  <- seq(t.start2,t.end2,"2 days")
+    axis.POSIXct(ax,at=min.ticks,labels=F,tcl=-0.2)
+    axis.POSIXct(ax,at=maj.ticks[-length(maj.ticks)],labels=F,tcl=-0.4)
+    axis.POSIXct(ax,at=maj.ticks2[-length(maj.ticks2)],cex.axis=0.7,lwd=lwd,
+                 labels=format(maj.ticks2[-length(maj.ticks2)],format="%d %b"),...)
+    # Add year
+    lab <- sprintf("%s\n%s", format(max(maj.ticks),format="%Y"),
+                   format(max(maj.ticks),format="%d %b"))
+    axis.POSIXct(ax,at=max(maj.ticks),labels=lab,lwd=lwd,
+                 cex.axis=0.8,...)
+    # Add grid
+    grid(nx=NA, ny=NULL)
+    abline(v=maj.ticks,col=col, lty="dotted", lwd=par("lwd"))
+#     # Add grid
+#     grid(nx=NA, ny=NULL)
+#     abline(v=maj.ticks2,col="black", lty="dotted", lwd=par("lwd"))
+}
+
+my.grid.week2.simple <-function(t.start,t.end,ax=1,col="black",lwd=2,...){
+    t.start2    <- trunc(t.start,"days")
+    t.end2      <- trunc(t.end,"days")
+    min.ticks   <- seq(t.start2,t.end,"2 hours")
+    maj.ticks   <- seq(t.start2,t.end2,"days")
+    maj.ticks2  <- seq(t.start2,t.end2,"2 days")
+    axis.POSIXct(ax,at=min.ticks,labels=F,tcl=-0.2)
+    axis.POSIXct(ax,at=maj.ticks[-length(maj.ticks)],labels=F,tcl=-0.4)
+    axis.POSIXct(ax,at=maj.ticks2[-length(maj.ticks2)],labels=F,
+                 cex.axis=0.7,lwd=lwd,...)
+    
+    # Add grid
+    grid(nx=NA, ny=NULL)
+    abline(v=maj.ticks,col=col, lty="dotted", lwd=par("lwd"))
 }
 
 my.grid.month <-function(t.start,t.end,ax=1,...){

@@ -37,7 +37,7 @@ barplot_TimeFactors  <- function(t.data,
         t.new       <- seq(from=as.POSIXct(sprintf("%i-01-01",year(t.data[1]))),
                            to  =as.POSIXct(sprintf("%i-01-01",year(t.data[lt]))),
                            by="months")
-        t.level     <- format(y.month,"%b %Y")
+        t.level     <- format(t.new,"%b %Y")
         t.text      <- "Month"
         
         # Extract Months and Years
@@ -106,6 +106,10 @@ barplot_TimeFactors  <- function(t.data,
     # Assign empty arrays
     count       <- rep(NA,nlev)
     
+    # Define time label (x-axis)
+    if (any(type %in% c("year","yearmonth","month","doy"))){xlab <- "Date"
+    } else if (type == "hours"){xlab <- "Time"}
+    
         #######################
         ### FOR n.data=NULL ###
         #######################
@@ -113,7 +117,11 @@ barplot_TimeFactors  <- function(t.data,
         # Count number of observations
         for (i in 1:nlev) {
             count[i]    <- sum(t.fac==t.level[i],na.rm=T)
-            cat(t.text,":", t.level[i], "has",count[i], "obs.","\n")
+            # Print 
+            if (type == "doy"){
+                if (format(as.POSIXct(t.level[i]),"%d") =="01"){
+                    cat(t.text,":", t.level[i], "has",count[i], "obs.","\n")}
+            }else{cat(t.text,":", t.level[i], "has",count[i], "obs.","\n")}
         }
         
         # Export data
@@ -164,9 +172,6 @@ barplot_TimeFactors  <- function(t.data,
                     order.by=t.new)
         
         ### PLOT ###
-        # Define time label
-        if (any(type %in% c("year","yearmonth","month","doy"))){xlab <- "Date"
-        } else if (type == "hours"){xlab <- "Time"}
         
         # add plot with n. of obs. to the boxplot
         if (type == "doy"){
