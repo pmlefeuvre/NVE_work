@@ -7,6 +7,7 @@
 # Images #
 #####################
 *.png
+*.ai
 
 # R generated files #
 #####################
@@ -24,6 +25,7 @@
 ##########
 LC6_f2013R.pdf
 LC97_2011.pdf
+Thumbs.db
 
 
 # Data & Admin Folders #
@@ -68,4 +70,4 @@ LC97_2011.pdf
 /Raw/2013
 /Raw/2014
 
-*.ai
+
