@@ -31,7 +31,7 @@ if(.Platform$OS.type == "unix"){   HOME="/Users/PiM/Desktop"}
 if(.Platform$OS.type == "windows"){HOME="//nve/fil/h/HB/Personlige mapper/PiM"}
 
 # Go to the following Path in order to access data files
-setwd(sprintf("%s/NVE_work/Raw/",HOME))
+setwd(sprintf("%s/NVE_work/PressureData/",HOME))
 Sys.setenv(TZ="UTC")        
 
 # Load libraries
@@ -60,11 +60,11 @@ format4Hydra2(year)
 
 ##  TRANSFER COMPILED DATA TO THE PROCESSING DIRECTORY  ##
 dir.create("../Processing/Data",showWarnings = FALSE)
-dir.create("../Processing/Data/RawR",showWarnings = FALSE)
+dir.create("../Processing/Data/PressureData",showWarnings = FALSE)
 
 for (year.cp in year){
 file.copy(sprintf("%i/ProcessingR/Compiled_%i.csv",year.cp,year.cp),
-          sprintf("../Processing/Data/RawR/LC_%i.csv",year.cp),
+          sprintf("../Processing/Data/PressureData/LC_%i.csv",year.cp),
           overwrite = TRUE)
 }
 

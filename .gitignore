@@ -26,7 +26,7 @@
 LC6_f2013R.pdf
 LC97_2011.pdf
 Thumbs.db
-
+*.apple.timemachine.supported
 
 # Data & Admin Folders #
 ########################
@@ -46,28 +46,28 @@ Thumbs.db
 /Processing/Data/Zoo
 /Processing/Plots
 /Processing/tocheck
-/Raw/1992
-/Raw/1993
-/Raw/1994
-/Raw/1995
-/Raw/1996
-/Raw/1997
-/Raw/1998
-/Raw/1999
-/Raw/2000
-/Raw/2001
-/Raw/2002
-/Raw/2003
-/Raw/2004
-/Raw/2005
-/Raw/2006
-/Raw/2007
-/Raw/2008
-/Raw/2009
-/Raw/2010
-/Raw/2011
-/Raw/2012
-/Raw/2013
-/Raw/2014
+/PressureData/1992
+/PressureData/1993
+/PressureData/1994
+/PressureData/1995
+/PressureData/1996
+/PressureData/1997
+/PressureData/1998
+/PressureData/1999
+/PressureData/2000
+/PressureData/2001
+/PressureData/2002
+/PressureData/2003
+/PressureData/2004
+/PressureData/2005
+/PressureData/2006
+/PressureData/2007
+/PressureData/2008
+/PressureData/2009
+/PressureData/2010
+/PressureData/2011
+/PressureData/2012
+/PressureData/2013
+/PressureData/2014
 
 

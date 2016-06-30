@@ -32,7 +32,7 @@ format4Hydra2 <- function(year=2013){
     if(.Platform$OS.type == "windows"){HOME="//nve/fil/h/HB/Personlige mapper/PiM"}
     
     # Go to the following Path in order to access data files
-    setwd(sprintf("%s/NVE_work/Raw/",HOME))
+    setwd(sprintf("%s/NVE_work/PressureData/",HOME))
     Sys.setenv(TZ="UTC")          
     
     # Load libraries

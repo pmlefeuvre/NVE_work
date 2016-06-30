@@ -45,7 +45,7 @@ print("Loading Load Cell Data")
 
 # Load the Data and combine them
 Years       <- seq(2011,2014)#2013
-datafile    <- sprintf("Data/RawR/LC_%i.csv",Years)
+datafile    <- sprintf("Data/PressureData/LC_%i.csv",Years)
 colClasses  <- c(rep("character",3),rep("numeric",9)) 
 LC_all      <- do.call("rbind",
                        lapply(datafile,
