@@ -14,7 +14,7 @@
 #                                                               #
 #---------------------------------------------------------------#
 
-# Detect Operating System
+# Detect Operating System (!!! EDIT TO YOUR PATH !!!)
 if(.Platform$OS.type == "unix"){   HOME="/Users/PiM/Desktop"}
 if(.Platform$OS.type == "windows"){HOME="//nve/fil/h/HB/Personlige mapper/PiM"}
 
@@ -41,6 +41,7 @@ source("../UserFunction/remove_col.R")
 ptm <- proc.time()
 
 print("Loading Load Cell Data")
+
 
 # Load the Data and combine them
 Years       <- seq(2011,2014)#2013

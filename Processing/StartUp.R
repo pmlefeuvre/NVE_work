@@ -28,13 +28,15 @@ source('LoadAllData_subsample_save_freq.R') # To save only frequency data
 
 
 # 2) Now, that the data are saved and processed, they can be loaded into R using:
-#   - "f_Load_ZooSub_month.R" to load the pressure of the load cell in MPa, and
-#   - "f_Load_ZooSub_month_freq.R" to load the frequency in Hz.
-# These two functions work similarly. First, you have to load them into R (i.e. source('f_Load_ZooSub_month.R') ), then you can call the function, the period of interest and the data type as follows:
+#   - "f_Load_ZooSub_month.R"
+# First, you have to load the function into R (i.e. source(FUNCTION) ), then 
+# call the function by adding the period of interest, the data type, and whether
+# you want to load pressure MPa (freq=F) or frequency Hz of the load cell (freq=T), 
+# as follows:
 
 source('f_Load_ZooSub_month.R') # Load the function that loads the LC data
 
-LC.reg.sub <- Load_ZooSub_month("2000-01-01","2001-01-01","15min_mean")
+LC.reg.sub <- Load_ZooSub_month("2000-01-01","2001-01-01","15min_mean",freq=F)
 head(LC.reg.sub)
 
 # This loads the 15min interval pressure data for the period 2000-2001 and saves it into the variable "LC.reg.sub".

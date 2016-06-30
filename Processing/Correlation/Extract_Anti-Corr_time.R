@@ -212,5 +212,18 @@ for (i in 1:length(LC.name)){
 
 ##### ARCHIVE
 
+# corr.sub <- subsample(LCs.corr,"2003-07-15","2003-07-28",F)
+# for( i in 1:9){plot(corr.sub[,i],ylim=c(-1,1),ylab=colnames(corr.sub)[i])}
 
+for (i in 1:2){
+tmp <- read.csv(sprintf("Data/Corr/AntiCorr/AntiCorr_LC97_%i_daymin1_ACmax-0.80_var0.010.csv",i))
+mon <- factor(format(as.Date(tmp[,1]),"%b"),levels=month.abb)
+plot(table(mon),ylim=c(0,8),lend=1,lwd=2)
+tmp <- read.csv(sprintf("Data/Corr/AntiCorr/AntiCorr_LC97_%i_daymin2_ACmax-0.80_var0.010.csv",i))
+mon <- factor(format(as.Date(tmp[,1]),"%b"),levels=month.abb)
+lines(table(mon),ylim=c(0,8),lend=1,lwd=6)
+tmp <- read.csv(sprintf("Data/Corr/AntiCorr/AntiCorr_LC97_%i_daymin3_ACmax-0.80_var0.010.csv",i))
+mon <- factor(format(as.Date(tmp[,1]),"%b"),levels=month.abb)
+lines(table(mon),ylim=c(0,8),lend=1,lwd=12)
+}
 

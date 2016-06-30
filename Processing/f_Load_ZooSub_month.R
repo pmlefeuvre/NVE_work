@@ -1,5 +1,5 @@
 #---------------------------------------------------------------#
-#              Load Processed PRESSURE LC Data from             #
+#       Load Processed PRESSURE or FREQUENCY LC Data from       #
 #                   a zoo regular space object                  #
 #                                                               #
 #                                                               #
@@ -7,9 +7,6 @@
 #                                       Last Update: 2016-04-25 #
 #                                                               #
 # Updates:                                                      #
-# - 2016-04-12: Deleted line 127 because rezoo is not needed    #
-#               "LC.reg.min  <-rezoo(LC.reg.min)"               #
-# - 2016-04-25: In load function, FUN=as.chron became as.POSIXct#
 #                                                               #
 #---------------------------------------------------------------#
 
@@ -20,9 +17,9 @@
 
 Load_ZooSub_month <- function(sub.start="05/15/2010 09:00",
                         sub.end="05/15/2010 11:00",
-                        type="15min_mean")
+                        type="15min_mean",freq=F)
 {
-    # Detect Operating System
+    # Detect Operating System (!!! EDIT TO YOUR PATH !!!)
     if(.Platform$OS.type == "unix"){   HOME="/Users/PiM/Desktop"}
     if(.Platform$OS.type == "windows"){HOME="//nve/fil/h/HB/Personlige mapper/PiM"}
     
@@ -102,14 +99,14 @@ Load_ZooSub_month <- function(sub.start="05/15/2010 09:00",
         lj          <-length(j.sub)
         
         daterange <- c(0)
-        # Loop through the files to load
+        # Create an string array with the files to load
         for (i in 1:(lj-1)) {
         # Define daterange for filename in julian day (ex:"2010-113-2010-161")
         daterange[i]   <-paste(juliandate(j.sub[i]),
                             juliandate(j.sub[i+1]), sep="_")
         }
         
-        # Directory
+        # Directory for the type of data to load
         if       (type == "min"){
             dir.type <- "Sub1min"
         }else if (type == "15min_med"){
@@ -120,11 +117,18 @@ Load_ZooSub_month <- function(sub.start="05/15/2010 09:00",
             dir.type <- "Sub_daily"
         }else{stop("Data type must be: min, 15min_med, 15min_mean or day_med")}
         
-        # Filename
-        datafile    <-paste("Data/Zoo/",dir.type,"/Zoo_LCall_", type,"_",
-                            daterange, ".csv", sep="")
+        # Assign Filename and whether to load Frequency data 
+        if (freq){
+            print("Load Frequency Data")
+            datafile    <-paste("Data/Zoo/",dir.type,"/Zoo_LCallfreq_",
+                                type,"_", daterange, ".csv", sep="")
+        }else{
+            print("Load Pressure Data")
+            datafile    <-paste("Data/Zoo/",dir.type,"/Zoo_LCall_",
+                                type,"_", daterange, ".csv", sep="")
+        }
         
-        # Load the file
+        # Load LC data from file(s)
         LC.reg.min <- do.call("rbind",
                               lapply(datafile,
                                      function(f) read.zoo(f, header = T,
@@ -145,7 +149,7 @@ Load_ZooSub_month <- function(sub.start="05/15/2010 09:00",
         print("Skip Loading of LC data because they already exists")
     }
     
-    # Check if a new subampling time was entered
+    # Assign used dates to check if a new subampling period was entered
     assign("old.start",sub.start,envir= .GlobalEnv)
     assign("old.end"  ,sub.end  ,envir= .GlobalEnv)
     

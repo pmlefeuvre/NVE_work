@@ -48,7 +48,7 @@ Plot_LCs_Pressure <- function(sub.start="2003-07-01",sub.end="2003-07-15",
                               f.plot=FALSE,f.freq=FALSE){
     
     ############################################################################
-    # Detect Operating System
+    # Detect Operating System (!!! EDIT TO YOUR PATH !!!)
     if(.Platform$OS.type == "unix"){   HOME="/Users/PiM/Desktop"}
     if(.Platform$OS.type == "windows"){HOME="//nve/fil/h/HB/Personlige mapper/PiM"}
     
@@ -62,7 +62,6 @@ Plot_LCs_Pressure <- function(sub.start="2003-07-01",sub.end="2003-07-15",
     
     # Load User functions
     source('f_Load_ZooSub_month.R')
-    source('f_Load_ZooSub_month_freq.R')
     source("../UserFunction/juliandate.R")
     
     ############################################################################
@@ -75,8 +74,7 @@ Plot_LCs_Pressure <- function(sub.start="2003-07-01",sub.end="2003-07-15",
     ####          Load Load Cell Data           ####
     ################################################
     # LOAD Data in "LC.reg.sub" to avoid reloading the data
-    if (!f.freq){LC.reg.sub  <- Load_ZooSub_month(     sub.start,sub.end,type)
-    }else{       LC.reg.sub  <- Load_ZooSub_month_freq(sub.start,sub.end,type)}
+    LC.reg.sub  <- Load_ZooSub_month(sub.start,sub.end,type,f.freq)
     
     # Extract Column according to the order in LCname -AND-
     n.LC        <- match(LCname,names(LC.reg.sub))

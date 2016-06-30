@@ -25,7 +25,7 @@
 # from "LoadAllData.R" and "LoadAllData_save.R" (no subsampling)#
 #---------------------------------------------------------------#
 
-# Detect Operating System
+# Detect Operating System  (!!! EDIT TO YOUR PATH !!!)
 if(.Platform$OS.type == "unix"){   HOME="/Users/PiM/Desktop"}
 if(.Platform$OS.type == "windows"){HOME="//nve/fil/h/HB/Personlige mapper/PiM"}
 
