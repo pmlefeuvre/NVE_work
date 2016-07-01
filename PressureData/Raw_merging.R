@@ -34,6 +34,7 @@ Raw_merging <- function(year=2013){
     Sys.setenv(TZ="UTC")        
     
     # Load libraries
+    if(!require("zoo")){install.packages("zoo")}
     library(zoo)
     
     # Load User Functions
