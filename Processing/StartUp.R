@@ -61,6 +61,13 @@ plot(LC.reg.sub,plot.type="single",type="p",pch=".")
 # use head to check columns vs. load cells
 plot(LC.reg.sub[,1])
 
+# To plot several load cells 
+#on one graph
+plot(LC.reg.sub[,c(1,3)])
+#on the same graph
+plot(LC.reg.sub[,c(1,3)],plot.type = "single")
+
+
 # The color of the time series is defined by the option "col"
 plot(LC.reg.sub,plot.type="single",type="p",pch=".",col=c("red","orange","yellow","cyan","blue"))
 
