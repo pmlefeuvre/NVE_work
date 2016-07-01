@@ -67,6 +67,7 @@ plot(LC.reg.sub[,c(1,3)])
 #on the same graph
 plot(LC.reg.sub[,c(1,3)],plot.type = "single")
 
+#?par for graphical parameter options
 
 # The color of the time series is defined by the option "col"
 plot(LC.reg.sub,plot.type="single",type="p",pch=".",col=c("red","orange","yellow","cyan","blue"))
@@ -78,7 +79,7 @@ source('f_Plot_LCs.R')
 # Now, the function is accessible from the Console and you can run a default example, by running:
 
 Plot_LCs_Pressure() # that is the same than
-Plot_LCs_Pressure(sub.start="2003-07-01",sub.end="2003-07-15",LCname=c("LC97_1","LC97_2"),type="15min_mean",f.plot=FALSE)
+Plot_LCs_Pressure(sub.start="2016-01-01",sub.end="2016-03-08",LCname=c("LC97_1","LC97_2"),type="min",f.plot=FALSE)
 
 # Notes: The load cells (LC) are plotted in pairs on subpanels.The number of panels depends on the number of LCs and allows a maximum of three pairs (or three panels).
 # Input: The start and end of the period is given with the 2 first inputs, then the load cell names, the type of data and whether you want to save the figure
