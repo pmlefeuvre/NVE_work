@@ -48,7 +48,7 @@ Plot_LCs_MetHydro <- function(sub.start="2003-07-13",sub.end="2003-07-31",
     
     # Detect Operating System
     if(.Platform$OS.type == "unix"){   HOME="/Users/PiM/Desktop"}
-    if(.Platform$OS.type == "windows"){HOME="//nve/fil/h/HB/Personlige mapper/PiM"}
+    if(.Platform$OS.type == "windows"){HOME="//nve/fil/h/HB/Bredata/breprosjekt/Engabreen/Engabreen Brelabben/"}
     
     # Go to the following Path in order to access data files
     setwd(sprintf("%s/NVE_work/Processing/",HOME))

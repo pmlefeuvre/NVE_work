@@ -64,10 +64,12 @@ plot(LC.reg.sub[,1])
 # To plot several load cells 
 #on one graph
 plot(LC.reg.sub[,c(1,3)])
+
+#?par for graphical parameter options
+
 #on the same graph
 plot(LC.reg.sub[,c(1,3)],plot.type = "single")
 
-#?par for graphical parameter options
 
 # The color of the time series is defined by the option "col"
 plot(LC.reg.sub,plot.type="single",type="p",pch=".",col=c("red","orange","yellow","cyan","blue"))
@@ -79,7 +81,7 @@ source('f_Plot_LCs.R')
 # Now, the function is accessible from the Console and you can run a default example, by running:
 
 Plot_LCs_Pressure() # that is the same than
-Plot_LCs_Pressure(sub.start="2016-01-01",sub.end="2016-03-08",LCname=c("LC97_1","LC97_2"),type="min",f.plot=FALSE)
+Plot_LCs_Pressure(sub.start="2016-01-01",sub.end="2016-03-08",LCname=c("LC4","LC6","LC97_1","LC97_2"),type="min",f.plot=FALSE)
 
 # Notes: The load cells (LC) are plotted in pairs on subpanels.The number of panels depends on the number of LCs and allows a maximum of three pairs (or three panels).
 # Input: The start and end of the period is given with the 2 first inputs, then the load cell names, the type of data and whether you want to save the figure
@@ -94,8 +96,16 @@ Plot_LCs_Pressure(sub.start="2016-01-01",sub.end="2016-03-08",LCname=c("LC97_1",
 
 source('Plot_LC_all.R')
 
+#
+source('f_Plot_LCs_MetHydro.R')
 
+# Now, the function is accessible from the Console and you can run a default example, by running:
 
+Plot_LCs_MetHydro() # that is the same than
+Plot_LCs_MetHydro(sub.start="2015-01-01",sub.end="2015-03-08",
+                  LCname=c("LC97_1","LC97_2"),type="15min_mean",
+                  Q.station=c("FonndalCrump","Subglacial"),AT.station="Engabrevatn",
+                  PP.station="Reipaa",f.plot=FALSE)
 
 
 
