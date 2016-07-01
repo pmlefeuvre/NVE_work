@@ -12,7 +12,7 @@ install.packages(c("zoo","chron","hydroTSM","Hmisc","lattice",
 # Set the working directory where are all the routines
 # Detect Operating System
 if(.Platform$OS.type == "unix"){   HOME="/Users/PiM/Desktop"}
-if(.Platform$OS.type == "windows"){HOME="//nve/fil/h/HB/Personlige mapper/PiM"}
+if(.Platform$OS.type == "windows"){HOME=HOME="//nve/fil/h/HB/Bredata/breprosjekt/Engabreen/Engabreen Brelabben/"}
 
 # Go to the following Path in order to access data files
 setwd(sprintf("%s/NVE_work/Processing/",HOME))
@@ -36,10 +36,12 @@ source('LoadAllData_subsample_save_freq.R') # To save only frequency data
 
 source('f_Load_ZooSub_month.R') # Load the function that loads the LC data
 
-LC.reg.sub <- Load_ZooSub_month("2000-01-01","2001-01-01","15min_mean",freq=F)
+#IMPORTANT! Edit the dates required
+
+LC.reg.sub <- Load_ZooSub_month("2016-01-01","2016-03-08","15min_mean",freq=F)
 head(LC.reg.sub)
 
-# This loads the 15min interval pressure data for the period 2000-2001 and saves it into the variable "LC.reg.sub".
+# This loads the 15min interval pressure data for the period required and saves it into the variable "LC.reg.sub".
 # (The data SHOULD ALWAYS BE SAVED IN THE VARIABLE "LC.reg.sub" FOR THE ROUTINE TO WORK PROPERLY).
 
 # 3) For Plotting
@@ -54,6 +56,10 @@ plot(LC.reg.sub,plot.type="single")
 # To plot points instead of lines (the default for zoo data), add: pch=20 or pch="."
 plot(LC.reg.sub,plot.type="single",type="p",pch=".")
 # pch gives the type of points to use. Find more types in the R help: ?pch
+
+# To plot one load cell (e.g. 1st load cell column)
+# use head to check columns vs. load cells
+plot(LC.reg.sub[,1])
 
 # The color of the time series is defined by the option "col"
 plot(LC.reg.sub,plot.type="single",type="p",pch=".",col=c("red","orange","yellow","cyan","blue"))
